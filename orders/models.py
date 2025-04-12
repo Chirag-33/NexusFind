@@ -6,12 +6,7 @@ from products.models import Product
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    status = models.CharField(max_length=20, choices=(
-        ("PENDING", "PENDING"), ("SHIPPED", "SHIPPED"),
-        ("PROCESSING", "PROCESSING"), ("DELIVERED", "DELIVERED"),
-        ("CANCELLED", "CANCELLED"), ("COMPLETED", "COMPLETED"),
-        ("PAYMENT_FAILED", "PAYMENT_FAILED")
-    ))
+    status = models.CharField(max_length=20, choices=(("PENDING", "PENDING"), ("SHIPPED", "SHIPPED"), ("PROCESSING", "PROCESSING"), ("DELIVERED", "DELIVERED"), ("CANCELLED", "CANCELLED"), ("COMPLETED", "COMPLETED"), ("PAYMENT_FAILED", "PAYMENT_FAILED")))
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     discount_applied = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     final_price = models.DecimalField(max_digits=10, decimal_places=2)

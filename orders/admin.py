@@ -2,7 +2,7 @@ from . models import *
 from django.contrib.admin import register
 from unfold.contrib.forms.widgets import WysiwygWidget 
 from unfold.admin import ModelAdmin
-# Register your models here.
+
 @register(Order)
 class OrderAdmin(ModelAdmin):
     list_display = ['user', 'status', 'total_price', 'discount_applied', 'final_price']

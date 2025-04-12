@@ -5,19 +5,11 @@ from django.http import HttpResponseRedirect
 from django.utils.timezone import now
 from .models import Cart, CartItem, Product, Coupon, CouponUsage
 
-
 class CartDetailView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         cart, created = Cart.objects.get_or_create(user=request.user)
-
-        context = {
-            'object': cart,
-            'original_price': cart.calculate_original_price(),
-            'discounted_price': cart.calculate_discounted_price(),
-        }
-
+        context = {'object': cart, 'original_price': cart.calculate_original_price(), 'discounted_price': cart.calculate_discounted_price(),}
         return render(request, 'cart_detail.html', context)
-
 
 class AddCartItemView(LoginRequiredMixin, View):
     def post(self, request, product_id):
@@ -29,11 +21,9 @@ class AddCartItemView(LoginRequiredMixin, View):
         if not created:
             cart_item.quantity += quantity
         else:
-            cart_item.price = product.price  # Set initial price
+            cart_item.price = product.price
         cart_item.save()
-
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class UpdateCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
@@ -43,16 +33,13 @@ class UpdateCartItemView(LoginRequiredMixin, View):
         if new_quantity > 0:
             cart_item.quantity = new_quantity
             cart_item.save()
-
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class RemoveCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
         cart_item = get_object_or_404(CartItem, id=item_id)
         cart_item.delete()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class ApplyCouponView(LoginRequiredMixin, View):
     def post(self, request):
@@ -64,7 +51,6 @@ class ApplyCouponView(LoginRequiredMixin, View):
             if not (coupon.valid_from <= now() <= coupon.valid_until):
                 return redirect('cart_detail')
 
-            # Check usage limits
             user_usage = CouponUsage.objects.filter(user=request.user, coupon=coupon).count()
             if coupon.max_usage_per_user and user_usage >= coupon.max_usage_per_user:
                 return redirect('cart_detail')
@@ -75,7 +61,6 @@ class ApplyCouponView(LoginRequiredMixin, View):
 
         return redirect('cart_detail')
 
-# ❎ Remove Coupon View
 class RemoveCouponView(LoginRequiredMixin, View):
     def post(self, request):
         cart, _ = Cart.objects.get_or_create(user=request.user)
