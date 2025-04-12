@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+
+{% block homeactive %} active {% endblock homeactive %}
+{% block content %}
+<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+
+    </div>
+    <!-- Carousel -->
+    <div class="carousel-inner rounded-5 shadow mt-2" style="height: 42rem; width: auto;">
+        <div class="carousel-item active" data-bs-interval="1800">
+            <img src="https://cdn.pixabay.com/photo/2019/12/14/08/36/shopping-4694470_1280.jpg" class="d-block w-100" alt="Movie Night" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item" data-bs-interval="1800">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.GPLvW3bF2qiexYN-NyvcHwHaFj?rs=1&pid=ImgDetMain" class="d-block w-100" alt="Enjoy Movies">
+        </div>
+        <div class="carousel-item" data-bs-interval="1800">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="d-block w-100" alt="Streaming">
+        </div>
+        <div class="carousel-item" data-bs-interval="1800">
+            <img src="https://images.unsplash.com/photo-1627384113972-f4c0392fe5aa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="d-block w-100" alt="Streaming">
+        </div>
+    </div>
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<!-- Welcome Section -->
+<div class="px-4 my-4 text-center">
+    <h1 class="display-4 fw-bold text-body-emphasis">Welcome to NexusFind!</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">NexusFind is your go-to platform for seamless online shopping. Buy the latest products for cheapest price !</p>
+    </div>
+</div>
+
+<!-- product categories -->
+<div class="container marketing">
+    <div class="row justify-content-center">
+        <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
+            <div class="d-flex flex-column align-items-center h-100 justify-content-between">
+                <a href="" style="text-decoration: none; color: black;">
+                    <img src="https://images.pexels.com/photos/7974/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="rounded-circle mb-3" alt="Stream Movies" width="150" height="150">
+                <h2 class="fw-normal text-center">Electronics</h2>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
+            <div class="d-flex flex-column align-items-center h-100 justify-content-between">
+                <a href="" style="text-decoration: none; color: black;">
+                    <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="rounded-circle mb-3" alt="About Us" width="150" height="150">
+                    <h2 class="fw-normal text-center">Clothing</h2>
+                </a>             
+            </div>
+        </div>
+        <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
+            <div class="d-flex flex-column align-items-center h-100 justify-content-between">
+                <a href="" style="text-decoration: none; color: black;">
+                <img src="https://images.unsplash.com/photo-1624031000828-dba1b7a3e4ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="rounded-circle mb-3" alt="Contact Us" width="150" height="150">
+                <h2 class="fw-normal text-center">CookWare</h2>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FEATURETTES -->
+<div class="row mt-5">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <!-- Product Image -->
+            <div class="ratio ratio-4x3">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
+            </div>
+
+            <!-- Product Details -->
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-center fw-bold">{{ product.name }}</h5>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between gap-2 mt-auto">
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-dark btn-sm flex-grow-1">Show Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Search Results{% endblock title %}
+
+{% block content %}
+<h3 class="text-center mt-2">Search Results for "{{ query }}"</h3>
+
+{% if allProducts %}
+<div class="row mt-4">
+    {% for product in allProducts %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <!-- Product image -->
+            <div class="ratio ratio-4x3">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
+            </div>
+
+            <!-- Product details -->
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-center">{{ product.name }}</h5>
+                <p class="card-text" style="flex-grow: 1;">
+                    {{ product.description|truncatewords:20 }}
+                </p>
+            
+                <!-- Centered Price -->
+                <div class="text-center mt-2">
+                    <span class="text-primary fw-bold fs-5">₹{{ product.price|intcomma }}</span>
+                </div>
+            
+                <!-- Full Width Button -->
+                <div class="mt-3">
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-dark btn-sm w-100">View Product</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-center mt-4">No products found for "{{ query }}".</p>
+{% endif %}
+
+<!-- Pagination Controls -->
+{% if allProducts.has_other_pages %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if not allProducts.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?query={{ query }}&page={{ allProducts.previous_page_number }}" aria-label="Previous">
+                &laquo;
+            </a>
+        </li>
+        {% for page in allProducts.paginator.page_range %}
+            {% if page >= allProducts.number|add:'-2' and page <= allProducts.number|add:'2' %}
+                {% if page == allProducts.number %}
+                    <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?query={{ query }}&page={{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {% if not allProducts.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?query={{ query }}&page={{ allProducts.next_page_number }}" aria-label="Next">
+                &raquo;
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock title %}
+{% load humanize %}
+
+{% block content %}
+<div class="container m-2">
+    <div class="row">
+        <!-- Left Section: Product & Comments -->
+        <div class="col-md-8">
+            <!-- Product Image Section -->
+            <div class="product-container mb-4 text-center">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm" style="max-height: 400px;">
+            </div>
+
+            <!-- Product Details Section -->
+            <div class="card p-4 mb-4">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">{{ product.name }}</h3>
+                <p><strong>Category:</strong> <span class="text-muted">{{ product.category }}</span></p>
+                <p><strong>Price:</strong> <span class="text-success">₹{{ product.price }}</span></p>
+                <p><strong>Description:</strong> <span class="text-muted">{{ product.description }}</span></p>
+            </div>
+
+            <!-- Comments Section -->
+            <section style="background-color: #f8f9fa;">
+                <div class="container">
+                    <h4 class="text-center mb-4">Comments <span>({{ product.comments.count }})</span></h4>
+                    <div class="mt-4">
+                        <h5><strong>Add a comment</strong></h5>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-outline">
+                                <label class="form-label" for="textAreaExample">What is your view?</label>
+                                <textarea class="form-control" name="content" rows="4" required></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between m-3">
+                                <button type="submit" class="btn btn-dark">Post Comment</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Display Comments -->
+                    {% for comment in comments %}
+                    <div class="d-flex flex-start mb-4">
+                        <img class="rounded-circle shadow-1-strong me-3" src="https://cdn-icons-png.flaticon.com/128/3033/3033143.png" alt="avatar" width="30" height="30" />
+                        <div class="flex-grow-1 flex-shrink-1">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="mb-1">
+                                        <strong>{{ comment.user.username }}</strong>
+                                        <span class="small badge text-bg-secondary m-1" style="font-size: 0.5rem;">{{ comment.created_at | naturaltime }}</span>
+                                    </p>
+                                </div>
+                                <p class="small mb-0">{{ comment.content }}</p>
+
+                                <!-- Reply Button -->
+                                <button class="btn btn-sm btn-dark m-2" data-bs-toggle="collapse" href="#reply-form-{{ comment.id }}" role="button" aria-expanded="false" aria-controls="reply-form-{{ comment.id }}">Reply</button>
+
+                                <!-- Replies -->
+                                <div class="ms-4 mt-3">
+                                    {% for reply in comment.replies.all %}
+                                    <div class="d-flex flex-start mb-3">
+                                        <img class="rounded-circle shadow-1-strong me-3" src="https://cdn-icons-png.flaticon.com/128/3033/3033143.png" alt="avatar" width="30" height="30" />
+                                        <div class="flex-grow-1 flex-shrink-1">
+                                            <div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <p class="mb-1">
+                                                        <strong>{{ reply.user.username }}</strong>
+                                                        <span class="small badge text-bg-secondary m-1" style="font-size: 0.5rem;">{{ reply.created_at | naturaltime }}</span>
+                                                    </p>
+                                                </div>
+                                                <p class="small mb-0">{{ reply.content }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Reply Form -->
+                                <div class="collapse mt-2" id="reply-form-{{ comment.id }}">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-outline">
+                                            <label class="form-label">Your Reply</label>
+                                            <textarea class="form-control" name="content" rows="3" required></textarea>
+                                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                        </div>
+                                        <div class="d-flex justify-content-between m-3">
+                                            <button type="submit" class="btn btn-dark btn-sm">Post Reply</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No comments yet. Be the first to comment!</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header text-center bg-dark text-white">
+                    <h5>Similar Products</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for other_product in similar_products %}
+                    <a href="{% url 'product_detail' other_product.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ other_product.image.url }}" class="rounded-circle mx-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ other_product.name }}">
+                            <span>{{ other_product.name }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
