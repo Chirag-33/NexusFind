@@ -7,17 +7,16 @@ from django.utils.timezone import now
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')
     coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.SET_NULL, related_name="carts")
+    is_buy_now = models.BooleanField(default=False)
 
     def calculate_original_price(self):
-        return sum(item.price for item in self.items.all())
+        return sum(item.price * item.quantity for item in self.items.all())
 
     def calculate_discounted_price(self):
         total = self.calculate_original_price()
         if self.coupon and self.coupon.is_active and self.coupon.valid_from <= now() and self.coupon.valid_until >= now():
-            if self.coupon.discount_type == "PERCENT":
-                total -= total * (self.coupon.discount_value / 100)
-            elif self.coupon.discount_type == "FLAT":
-                total -= self.coupon.discount_value
+            if self.coupon.discount_type == "PERCENT": total -= total * (self.coupon.discount_value / 100)
+            elif self.coupon.discount_type == "FLAT": total -= self.coupon.discount_value
         return max(total, 0)
 
     class Meta:
@@ -25,7 +24,7 @@ class Cart(models.Model):
         verbose_name_plural = "Carts"
 
     def __str__(self):
-        return f"Cart for {self.user} with {self.items.count()} items"
+        return f"{'Buy Now' if self.is_buy_now else 'Regular'} Cart for {self.user} with {self.items.count()} items"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")

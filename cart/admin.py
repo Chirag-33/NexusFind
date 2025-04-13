@@ -4,7 +4,7 @@ from .models import CartItem,Cart
 
 @register(Cart)
 class CartAdmin(ModelAdmin):
-    list_display = ['user', 'coupon', 'calculate_original_price', 'calculate_discounted_price']
+    list_display = ['user', 'coupon', 'calculate_original_price', 'calculate_discounted_price', 'is_buy_now']
     search_fields = ["user__username", "coupon__code"]
 
 @register(CartItem)
