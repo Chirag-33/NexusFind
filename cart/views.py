@@ -45,7 +45,6 @@ class UpdateCartItemView(LoginRequiredMixin, View):
         if new_quantity > 0:
             cart_item.quantity = new_quantity
             cart_item.save()
-
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 class RemoveCartItemView(LoginRequiredMixin, View):
@@ -53,7 +52,6 @@ class RemoveCartItemView(LoginRequiredMixin, View):
         cart_item = get_object_or_404(CartItem, id=item_id)
         cart_item.delete()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class ApplyCouponView(LoginRequiredMixin, View):
     def post(self, request):
@@ -65,7 +63,6 @@ class ApplyCouponView(LoginRequiredMixin, View):
             if not (coupon.valid_from <= now() <= coupon.valid_until):
                 return redirect('cart_detail')
 
-            # Check usage limits
             user_usage = CouponUsage.objects.filter(user=request.user, coupon=coupon).count()
             if coupon.max_usage_per_user and user_usage >= coupon.max_usage_per_user:
                 return redirect('cart_detail')

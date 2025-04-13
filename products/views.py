@@ -10,9 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator 
 
-
 # Home View
-class homeView(View):
+class HomeView(View):
     def get(self, request):
         products = Product.objects.all()
         return render(request, 'home.html', context={'title': 'Home', 'products':products})
@@ -52,7 +51,7 @@ class ContactView(View):
         messages.success(request, 'Your message has been sent successfully!')
         return redirect('contact')
 
-# Search Vie
+# Search View
 class SearchView(View):
     def get(self, request):
         query = request.GET.get('query', '').strip()
@@ -63,8 +62,7 @@ class SearchView(View):
                 Q(name__icontains=query) |
                 Q(description__icontains=query) |
                 Q(category__name__icontains=query) |
-                Q(price__icontains=query)
-            ).order_by('-created_at')
+                Q(price__icontains=query)).order_by('-created_at')
         else:
             if len(query) > 78:
                 messages.warning(request, "Search query too long. Please shorten it.")
@@ -72,15 +70,11 @@ class SearchView(View):
         if not product_list:
             messages.warning(request, f'No search results found for "{query}". Please refine your query.')
 
-        paginator = Paginator(product_list, 9)  # Show 9 products per page
+        paginator = Paginator(product_list, 9)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        return render(request, 'search.html', {
-            'title': 'Search',
-            'query': query,
-            'allProducts': page_obj,
-        })
+        return render(request, 'search.html', {'title': 'Search', 'query': query, 'allProducts': page_obj,})
 
 # SignUp View
 class SignUpView(View):
@@ -169,14 +163,9 @@ def profile_view(request):
 
     history = ProductHistory.objects.filter(user=user).order_by('-purchased_at')
 
-    return render(request, 'profile.html', {
-        'form': form,
-        'profile': profile,
-        'user': user,
-        'history': history,
-    })
+    return render(request, 'profile.html', {'form': form, 'profile': profile, 'user': user, 'history': history,})
 
-
+# Product Detail View
 class ProductDetailView(View):
     def get(self, request, product_id):
         try:
@@ -186,11 +175,7 @@ class ProductDetailView(View):
         except Product.DoesNotExist:
             return redirect('home')
 
-        return render(request, 'product_detail.html', context={
-            'product': product,
-            'comments': comments,
-            'similar_products': similar_products,
-        })
+        return render(request, 'product_detail.html', context={'product': product, 'comments': comments, 'similar_products': similar_products})
 
     def post(self, request, product_id):
         try:

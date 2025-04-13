@@ -11,4 +11,3 @@ class CartAdmin(ModelAdmin):
 class CartItemAdmin(ModelAdmin):
     list_display = ['cart', 'product__name', 'quantity', 'price']
     search_fields = ["cart__user__username", "product__name"]
-
