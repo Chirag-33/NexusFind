@@ -79,10 +79,12 @@
     {% for product in products %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <!-- Product Image -->
-            <div class="ratio ratio-4x3">
-                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
-            </div>
+            <!-- Clickable Product Image -->
+            <a href="{% url 'product_detail' product.id %}">
+                <div class="ratio ratio-4x3">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
+                </div>
+            </a>
 
             <!-- Product Details -->
             <div class="card-body d-flex flex-column">
@@ -90,11 +92,24 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between gap-2 mt-auto">
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-dark btn-sm flex-grow-1">Show Details</a>
+                    <!-- Add to Cart -->
+                    <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-outline-dark btn-sm w-100">Add to Cart</button>
+                    </form>
+
+                    <!-- Buy Now -->
+                    <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-dark btn-sm w-100">Buy Now</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+
 {% endblock content %}

@@ -5,19 +5,17 @@ from django.http import HttpResponseRedirect
 from django.utils.timezone import now
 from .models import Cart, CartItem, Product, Coupon, CouponUsage
 
-
-class CartDetailView(LoginRequiredMixin, View):
+class CartDetailView(LoginRequiredMixin, View): 
     def get(self, request, *args, **kwargs):
         cart, created = Cart.objects.get_or_create(user=request.user)
 
         context = {
-            'object': cart,
+            'cart': cart,  # 🔄 changed from 'object'
             'original_price': cart.calculate_original_price(),
             'discounted_price': cart.calculate_discounted_price(),
         }
 
         return render(request, 'cart_detail.html', context)
-
 
 class AddCartItemView(LoginRequiredMixin, View):
     def post(self, request, product_id):
@@ -25,15 +23,19 @@ class AddCartItemView(LoginRequiredMixin, View):
         quantity = int(request.POST.get('quantity', 1))
         cart, _ = Cart.objects.get_or_create(user=request.user)
 
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-        if not created:
+        try:
+            cart_item = CartItem.objects.get(cart=cart, product=product)
             cart_item.quantity += quantity
-        else:
-            cart_item.price = product.price  # Set initial price
-        cart_item.save()
+            cart_item.save()
+        except CartItem.DoesNotExist:
+            cart_item = CartItem.objects.create(
+                cart=cart,
+                product=product,
+                quantity=quantity,
+                price=product.price  # assuming you track item price
+            )
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class UpdateCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
@@ -45,7 +47,6 @@ class UpdateCartItemView(LoginRequiredMixin, View):
             cart_item.save()
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 
 class RemoveCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
@@ -75,10 +76,10 @@ class ApplyCouponView(LoginRequiredMixin, View):
 
         return redirect('cart_detail')
 
-# ❎ Remove Coupon View
 class RemoveCouponView(LoginRequiredMixin, View):
     def post(self, request):
         cart, _ = Cart.objects.get_or_create(user=request.user)
         cart.coupon = None
         cart.save()
         return redirect('cart_detail')
+
