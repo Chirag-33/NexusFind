@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_type|title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+        .content {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-transform: capitalize;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p, li {
+            color: #555;
+            line-height: 1.7;
+        }
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        {% if page_type == "faq" %}
+            <h1>Frequently Asked Questions</h1>
+            <ul>
+                <li>
+                    <strong>Q:</strong> How long does shipping take?<br>
+                    <strong>A:</strong> Standard shipping takes 3–5 business days. Express delivery options are available during checkout.
+                </li>
+                <li>
+                    <strong>Q:</strong> Can I cancel my order?<br>
+                    <strong>A:</strong> Yes, orders can be cancelled within 24 hours. Contact our support team as soon as possible.
+                </li>
+                <li>
+                    <strong>Q:</strong> Do you ship internationally?<br>
+                    <strong>A:</strong> Yes, we offer international shipping to over 50 countries worldwide. Shipping times may vary by region.
+                </li>
+                <li>
+                    <strong>Q:</strong> How can I track my order?<br>
+                    <strong>A:</strong> Once shipped, you'll receive an email with tracking details. You can also track your order in your account dashboard.
+                </li>
+                <li>
+                    <strong>Q:</strong> What payment methods do you accept?<br>
+                    <strong>A:</strong> We accept Visa, Mastercard, PayPal, Apple Pay, and Google Pay.
+                </li>
+            </ul>
+
+        {% elif page_type == "returns" %}
+            <h1>Return Policy</h1>
+            <p>We stand by the quality of our products. If you're not completely satisfied, we offer a 30-day return policy on most items.</p>
+            <p><strong>Conditions for Return:</strong></p>
+            <ul>
+                <li>The item must be unused and in original packaging.</li>
+                <li>Proof of purchase (receipt or order number) is required.</li>
+                <li>Returns must be initiated within 30 days of the delivery date.</li>
+            </ul>
+            <p><strong>How to Return:</strong></p>
+            <ul>
+                <li>Log into your account and go to the Orders section.</li>
+                <li>Select the item you want to return and follow the return steps.</li>
+                <li>Ship the item back using the provided return label.</li>
+            </ul>
+            <p>Refunds will be processed within 7 business days of receiving the returned item. Return shipping fees may apply unless the return is due to a defective product.</p>
+
+        {% elif page_type == "term" %}
+            <h1>Terms and Conditions</h1>
+            <p>Welcome to our website. By accessing this site, you agree to the following terms and conditions. Please read them carefully before using our services.</p>
+            <p><strong>1. Use of Website</strong></p>
+            <p>You must be at least 18 years old or visiting under the supervision of a parent or guardian. All content on this site is the property of our company and may not be reproduced without permission.</p>
+            <p><strong>2. Account Responsibility</strong></p>
+            <p>You're responsible for maintaining the confidentiality of your account and password. We are not liable for any loss or damage arising from your failure to protect your credentials.</p>
+            <p><strong>3. Pricing and Product Availability</strong></p>
+            <p>All prices are listed in USD and are subject to change. Product availability is not guaranteed and may be withdrawn without notice.</p>
+            <p><strong>4. Limitation of Liability</strong></p>
+            <p>We are not liable for any damages resulting from the use or inability to use the website or any content therein.</p>
+
+        {% elif page_type == "shipping" %}
+            <h1>Shipping Information</h1>
+            <p>We are committed to delivering your order quickly and efficiently. Below is a breakdown of our shipping policies:</p>
+            <p><strong>Domestic Shipping:</strong></p>
+            <ul>
+                <li><strong>Standard:</strong> 3–5 business days – Free for orders over $50</li>
+                <li><strong>Express:</strong> 1–2 business days – $9.99 flat rate</li>
+            </ul>
+            <p><strong>International Shipping:</strong></p>
+            <ul>
+                <li>Delivery times vary depending on the destination (usually 7–14 business days).</li>
+                <li>Customs and duties may apply and are the responsibility of the recipient.</li>
+            </ul>
+            <p><strong>Order Processing:</strong></p>
+            <p>Orders are processed within 24 hours on business days (Mon–Fri). You will receive a confirmation email with tracking information once your order is shipped.</p>
+            <p><strong>Delays:</strong></p>
+            <p>Weather conditions, customs processes, or unexpected demand may cause shipping delays. We appreciate your patience in such cases.</p>
+
+        {% else %}
+            <h1>Page Not Found</h1>
+            <p>The page you are looking for does not exist. Please return to the <a href="/">homepage</a>.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

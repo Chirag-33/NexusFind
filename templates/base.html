@@ -176,12 +176,13 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-semibold">Customer Service</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/faq/" class="text-white text-decoration-none">FAQs</a></li>
-                        <li><a href="/returns/" class="text-white text-decoration-none">Return Policy</a></li>
-                        <li><a href="/shipping/" class="text-white text-decoration-none">Shipping Info</a></li>
-                        <li><a href="/terms/" class="text-white text-decoration-none">Terms & Conditions</a></li>
+                        <li><a href="{% url 'info_page' 'faq' %}" class="text-white text-decoration-none">FAQs</a></li>
+                        <li><a href="{% url 'info_page' 'returns' %}" class="text-white text-decoration-none">Return Policy</a></li>
+                        <li><a href="{% url 'info_page' 'shipping' %}" class="text-white text-decoration-none">Shipping Info</a></li>
+                        <li><a href="{% url 'info_page' 'term' %}" class="text-white text-decoration-none">Terms & Conditions</a></li>
                     </ul>
                 </div>
+                
     
                 <!-- Contact Info -->
                 <div class="col-md-3 mb-4">

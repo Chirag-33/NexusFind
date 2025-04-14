@@ -173,10 +173,13 @@ class ProductDetailView(View):
                 comment = Comment(product=product, user=request.user, content=content)
             comment.save()
             messages.success(request, 'Your comment has been posted!')
-        return redirect('product_detail', product_id=product_id)
+        return redirect(request,'product_detail', product_id=product_id)
 
-def info_page_view(request,page_type):
-    allowed_pages = ['Faq','returns', 'term', 'shipping']
+def info_page_view(request, page_type):
+    allowed_pages = ['faq', 'returns', 'term', 'shipping']
+    page_type = page_type.lower()
+
     if page_type not in allowed_pages:
-        return render(request, '404.html',status=400)
-    return render(request, info_page_view,{"page_type":page_type})
+        return render(request, '404.html', status=400)
+
+    return render(request, 'info_page_view.html', {"page_type": page_type})
