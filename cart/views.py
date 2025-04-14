@@ -61,7 +61,6 @@ class RemoveCartItemView(LoginRequiredMixin, View):
         cart_item.delete()
         if cart.is_buy_now and not cart.items.exists():
             cart.delete()
-
         return HttpResponseRedirect(f'/cart/?type={cart_type}')
 
 class BuyNowView(LoginRequiredMixin, View):
