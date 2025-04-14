@@ -46,17 +46,23 @@ class UpdateCartItemView(LoginRequiredMixin, View):
         if new_quantity > 0:
             cart_item.quantity = new_quantity
             cart_item.save()
-        else: cart_item.delete()
-            if cart.is_buy_now: cart.delete()
+        else: 
+            cart_item.delete()
+            if cart.is_buy_now: 
+                cart.delete()
         return HttpResponseRedirect(f'/cart/?type={"buy_now" if cart.is_buy_now else "regular"}')
 
 class RemoveCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
-        cart_item = get_object_or_404(CartItem, id=item_id)
+        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
         cart = cart_item.cart
+        cart_type = "buy_now" if cart.is_buy_now else "regular"
+
         cart_item.delete()
-        if cart.is_buy_now and not cart.items.exists(): cart.delete()
-        return HttpResponseRedirect(f'/cart/?type={"buy_now" if cart.is_buy_now else "regular"}')
+        if cart.is_buy_now and not cart.items.exists():
+            cart.delete()
+
+        return HttpResponseRedirect(f'/cart/?type={cart_type}')
 
 class BuyNowView(LoginRequiredMixin, View):
     def post(self, request, product_id):

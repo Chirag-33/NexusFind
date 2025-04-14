@@ -7,9 +7,9 @@ from products.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('products.urls')),
-    path('cart/', include('cart.urls')),
     path('accounts/', include('allauth.urls')),
+    path('', include('products.urls'), name = 'products'),
+    path('cart/', include('cart.urls'), name = 'cart'),
     path('search/', SearchView.as_view(), name='search'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signin/', SignInView.as_view(), name='signin'),
