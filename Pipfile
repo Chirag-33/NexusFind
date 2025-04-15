@@ -15,6 +15,7 @@ django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 PyJWT = "*" 
 cryptography = '*'
+psycopg = {extras = ["binary"], version = "*"}
 
 [dev-packages]
 
