@@ -13,7 +13,7 @@
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top py-0">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/home/">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <img src="https://cdn-icons-png.flaticon.com/128/7191/7191783.png" width="auto" height="50" class="d-inline-block align-text-mid me-2"/>NexusFind
             </a>
     
@@ -27,20 +27,20 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% block homeactive %}{% endblock homeactive %}" href="/home/">Home</a>
+                        <a class="nav-link {% block homeactive %}{% endblock homeactive %}" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block aboutactive %}{% endblock aboutactive %}" href="/about/">About</a>
+                        <a class="nav-link {% block aboutactive %}{% endblock aboutactive %}" href="{% url 'about' %}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block contactactive %}{% endblock contactactive %}" href="/contact/">Contact</a>
+                        <a class="nav-link {% block contactactive %}{% endblock contactactive %}" href="{% url 'contact' %}">Contact</a>
                     </li>
                 </ul>
     
                 <!-- Right side: Search + Auth buttons -->
                 <div class="d-flex align-items-center">
                     <!-- Search -->
-                    <form method="get" action="/search/" class="d-flex align-items-center me-3">
+                    <form method="get" action="{% url 'search' %}" class="d-flex align-items-center me-3">
                         <input class="form-control me-2" placeholder="Search" aria-label="Search" name="query" id="search">
                         <button class="btn btn-outline-light" type="submit">Search</button>
                     </form>
@@ -52,8 +52,8 @@
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <button type="submit" class="btn btn-light">Sign Out</button>
                         </form>
-                        <a class="nav-link d-flex align-items-center" href="/profile/"><img src="https://img.icons8.com/?size=40&id=15263&format=png&color=ffffff" alt="Profile" height="40" class="rounded-circle"></a>
-                        <a class="nav-link d-flex align-items-center" href="/cart/"><img src="https://img.icons8.com/?size=100&id=15893&format=png&color=ffffff" alt="Cart" height="40" class="rounded-circle"></a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'profile' %}"><img src="https://img.icons8.com/?size=40&id=15263&format=png&color=ffffff" alt="Profile" height="40" class="rounded-circle"></a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'cart_detail' %}"><img src="https://img.icons8.com/?size=100&id=15893&format=png&color=ffffff" alt="Cart" height="40" class="rounded-circle"></a>
                     {% else %}
                         <!-- Sign In / Sign Up -->
                         <button type="button" class="btn btn-light me-2" data-bs-toggle="modal" data-bs-target="#signInModal">Sign In</button>
@@ -166,9 +166,9 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-semibold">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/home/" class="text-white text-decoration-none">Home</a></li>
-                        <li><a href="/about/" class="text-white text-decoration-none">About Us</a></li>
-                        <li><a href="/contact/" class="text-white text-decoration-none">Contact</a></li>
+                        <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'about' %}" class="text-white text-decoration-none">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-white text-decoration-none">Contact</a></li>
                     </ul>
                 </div>
     
@@ -183,7 +183,6 @@
                     </ul>
                 </div>
                 
-    
                 <!-- Contact Info -->
                 <div class="col-md-3 mb-4">
                     <h5 class="fw-semibold">Get in Touch</h5>

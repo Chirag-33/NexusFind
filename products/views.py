@@ -140,15 +140,32 @@ class SignOutView(View):
 def profile_view(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
+    address_form = None
+    
+    # Check if the user has an address linked to their profile
+    if profile.address:
+        address_form = CustomerAddressForm(instance=profile.address)
+    
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+        
+        if address_form:
+            address_form = CustomerAddressForm(request.POST, instance=profile.address)
+            if address_form.is_valid():
+                address_form.save()
+
             return redirect('home')
     else:
         form = ProfileForm(instance=profile)
+    
     history = ProductHistory.objects.filter(user=user).order_by('-purchased_at')
-    return render(request, 'profile.html', {'form': form, 'profile': profile, 'user': user, 'history': history,})
+    
+    return render(request, 'profile.html', {
+        'form': form, 'profile': profile, 'user': user, 
+        'history': history, 'address_form': address_form
+    })
 
 # Product Detail View
 class ProductDetailView(View):

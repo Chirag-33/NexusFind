@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django import forms
 
 class CustomerAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
@@ -19,3 +20,8 @@ class CustomerAddress(models.Model):
 
     def __str__(self):
         return self.address_line_1 or "Unnamed Address"
+
+class CustomerAddressForm(forms.ModelForm):
+    class Meta:
+        model = CustomerAddress
+        fields = ['address_line_1', 'address_line_2', 'city', 'state', 'country', 'pincode', 'address_type']

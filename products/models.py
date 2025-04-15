@@ -73,4 +73,4 @@ class Comment(models.Model):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'phone_number','email']
+        fields = ['profile_picture', 'phone_number', 'email']
