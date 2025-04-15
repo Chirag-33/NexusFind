@@ -39,7 +39,7 @@
 <!-- Welcome Section -->
 <div class="px-4 my-4 text-center">
     <h1 class="display-4 fw-bold text-body-emphasis">Welcome to NexusFind!</h1>
-    <div class="col-lg-6 mx-auto">
+    <div class="col-lg-6 mx-auto ">
         <p class="lead mb-4">NexusFind is your go-to platform for seamless online shopping. Buy the latest products for cheapest price !</p>
     </div>
 </div>
@@ -51,7 +51,7 @@
             <div class="d-flex flex-column align-items-center h-100 justify-content-between">
                 <a href="" style="text-decoration: none; color: black;">
                     <img src="https://images.pexels.com/photos/7974/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="rounded-circle mb-3" alt="Stream Movies" width="150" height="150">
-                <h2 class="fw-normal text-center">Electronics</h2>
+                <h2 class="fw-normal text-center fw-bold">Electronics</h2>
                 </a>
             </div>
         </div>
@@ -59,52 +59,67 @@
             <div class="d-flex flex-column align-items-center h-100 justify-content-between">
                 <a href="" style="text-decoration: none; color: black;">
                     <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="rounded-circle mb-3" alt="About Us" width="150" height="150">
-                    <h2 class="fw-normal text-center">Clothing</h2>
+                    <h2 class="fw-normal text-center fw-bold">Clothing</h2>
                 </a>             
             </div>
         </div>
         <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
             <div class="d-flex flex-column align-items-center h-100 justify-content-between">
                 <a href="" style="text-decoration: none; color: black;">
-                <img src="https://images.unsplash.com/photo-1624031000828-dba1b7a3e4ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="rounded-circle mb-3" alt="Contact Us" width="150" height="150">
-                <h2 class="fw-normal text-center">CookWare</h2>
+                <img src="https://images.unsplash.com/photo-1624031000828-dba1b7a3e4ce?q=80&w=150&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="rounded-circle mb-3" alt="Contact Us" width="150" height="150">
+                <h2 class="fw-normal text-center fw-bold ">CookWare</h2>
                 </a>
             </div>
         </div>
     </div>
 </div>
-<!-- Products -->
-<div class="row mt-5">
-    {% for product in products %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <a href="{% url 'product_detail' product.id %}">
-                <div class="ratio ratio-4x3">
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
-                </div>
-            </a>
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title text-center fw-bold">{{ product.name }}</h5>
-                <div class="d-flex justify-content-between gap-2 mt-auto">
-                    {% if user.is_authenticated %}
-                    <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
-                        {% csrf_token %}
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-outline-dark btn-sm w-100">Add to Cart</button>
-                    </form>
-                    <form action="{% url 'buy_now' product.id %}" method="post" class="flex-grow-1">
-                        {% csrf_token %}
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-dark btn-sm w-100">Buy Now</button>
-                    </form>
-                    {% else %}
-                    <button class="btn btn-outline-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Add</button>
-                    <button class="btn btn-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Buy</button>
-                    {% endif %}
+<div class="container mt-1">
+    <!-- Header with Navigation Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Featured Categories</h2>
+        <div>
+            <button class="btn btn-outline-secondary me-2">
+                <
+                    <button class="btn btn-outline-secondary">></button>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 text-center">
+                <a href="{% url 'product_detail' product.id %}">
+                    <div class="ratio ratio-4x3">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                            style="object-fit: cover;">
+                    </div>
+                </a>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-center fw-bold">{{ product.name }}</h5>
+                    <div class="d-flex justify-content-between gap-2 mt-auto">
+                        {% if user.is_authenticated %}
+                        <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-outline-dark btn-sm w-100">Add to Cart</button>
+                        </form>
+                        <form action="{% url 'buy_now' product.id %}" method="post" class="flex-grow-1">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-dark btn-sm w-100">Buy Now</button>
+                        </form>
+                        {% else %}
+                        <button class="btn btn-outline-dark btn-sm w-100" data-bs-toggle="modal"
+                            data-bs-target="#signInModal">Login to Add</button>
+                        <button class="btn btn-dark btn-sm w-100" data-bs-toggle="modal"
+                            data-bs-target="#signInModal">Login to Buy</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock content %}

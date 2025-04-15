@@ -22,27 +22,35 @@ class AboutView(View):
         return render(request, 'about.html', context={'title': 'About'})
 
 # Contact View
-@method_decorator(login_required,name='dispatch')
 class ContactView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            next_url = request.path
+            messages.info(request, "Please sign in to access the Contact page.")
+            return redirect(f"/home/?next={next_url}")
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         context = {'title': 'Contact'}
-        if request.user.is_authenticated:
-            context['user_name'] = request.user.username
-            context['user_email'] = request.user.email
+        context['user_name'] = request.user.username
+        context['user_email'] = request.user.email
         return render(request, 'contact.html', context)
-    
+
     def post(self, request):
         user_name = request.POST.get('name')
         user_email = request.POST.get('email')
         user_message = request.POST.get('message')
         attachment = request.FILES.get('file_path')
+
         if request.user.is_authenticated:
             user_name = request.user.username
             user_email = request.user.email
+
         if not request.user.is_authenticated:
             if len(user_name) < 2 or not re.match(r"[^@]+@[^@]+\.[^@]+", user_email) or len(user_message) < 4:
                 messages.error(request, 'Invalid form data! Please check your name, email, and message.')
                 return redirect('contact')
+
         contact = Contact(name=user_name, email=user_email, message=user_message, file_path=attachment)
         contact.save()
         messages.success(request, 'Your message has been sent successfully!')

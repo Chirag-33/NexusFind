@@ -4,6 +4,11 @@
 {%block contactactive%} active {%endblock contactactive%}
 {% block content %}
 <h3 class="d-flex align-items-center justify-content-center mt-2">Contact Us!</h3>
+{% if request.GET.next %}
+<div class="alert alert-info mt-2">
+    You must be logged in to access that page. <button class="btn btn-sm btn-dark" data-bs-toggle="modal data-bs-target="#signInModal">Click here to sign in</button>
+</div>
+{% else %}
 <form method="post" enctype="multipart/form-data" class="form-group rounded p-3 shadow-lg">
     {% csrf_token %}
     <label for="name">Your Name:</label>
@@ -16,4 +21,5 @@
     <input class="form-control" type="file" id="file_path" name="file_path"><br>
     <button type="submit" class="btn btn-dark">Submit</button>
 </form>
+{% endif %}
 {% endblock content%}
