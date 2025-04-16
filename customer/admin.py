@@ -6,6 +6,6 @@ from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationFo
 
 @register(CustomerAddress)
 class CustomerAddressAdmin(ModelAdmin):
-    list_display = ['user','phone', 'state', 'country', 'pincode']
+    list_display = ['user', 'state', 'country', 'pincode']
     search_fields = ["user__email", "user__full_name", "address_line_1", "address_line_2", "city", "state", "country", "pincode"]
     list_filter = ['address_type']

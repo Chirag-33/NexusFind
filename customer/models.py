@@ -4,7 +4,6 @@ from django import forms
 
 class CustomerAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
-    phone = models.IntegerField()
     email = models.EmailField(unique=True)
     address_line_1 = models.CharField(max_length=100, null=True)
     address_line_2 = models.CharField(max_length=100, blank=True, null=True)

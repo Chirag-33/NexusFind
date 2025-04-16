@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.views import View
 from .models import Contact,Product,Profile,ProductHistory, ProfileForm, Comment
+from customer.models import CustomerAddressForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -78,9 +79,11 @@ class SearchView(View):
 # SignUp View
 class SignUpView(View):
     def get(self, request):
+        print("POST DATA:", request.POST)
         return render(request, "home.html")
 
     def post(self, request):
+        print("POST DATA:", request.POST)
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
@@ -139,32 +142,55 @@ class SignOutView(View):
 @login_required
 def profile_view(request):
     user = request.user
-    profile, created = Profile.objects.get_or_create(user=user)
-    address_form = None
-    
-    # Check if the user has an address linked to their profile
-    if profile.address:
-        address_form = CustomerAddressForm(instance=profile.address)
-    
+    print(f"DEBUG: Logged in user email = {user.email}")
+
+    # Get or create the profile
+    profile, created = Profile.objects.get_or_create(
+        user=user,
+        defaults={'email': user.email or ''}
+    )
+
+    # Sync profile email with user email
+    if user.email and profile.email != user.email:
+        profile.email = user.email
+        profile.save()
+
+    # Prepare the address form instance
+    address_instance = profile.address if hasattr(profile, 'address') else None
+    address_form = CustomerAddressForm(instance=address_instance)
+
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
-        
-        if address_form:
-            address_form = CustomerAddressForm(request.POST, instance=profile.address)
-            if address_form.is_valid():
-                address_form.save()
+        address_form = CustomerAddressForm(request.POST, instance=address_instance)
 
-            return redirect('home')
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.save()
+
+        if address_form.is_valid():
+            address = address_form.save(commit=False)
+            address.user = user
+            address.save()
+
+            # Link address to profile if not already linked
+            if not hasattr(profile, 'address') or profile.address != address:
+                profile.address = address
+                profile.save()
+
+        return redirect('home')
+
     else:
         form = ProfileForm(instance=profile)
-    
+
+    # User's purchase history
     history = ProductHistory.objects.filter(user=user).order_by('-purchased_at')
-    
+
     return render(request, 'profile.html', {
-        'form': form, 'profile': profile, 'user': user, 
-        'history': history, 'address_form': address_form
+        'form': form,
+        'profile': profile,
+        'user': user,
+        'history': history,
+        'address_form': address_form
     })
 
 # Product Detail View

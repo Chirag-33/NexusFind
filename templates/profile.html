@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{%block title%}Profile{%endblock title%}
+{% block title %}Profile{% endblock title %}
 
 {% block content %}
 <div class="container mt-5">
@@ -8,19 +8,24 @@
     <!-- Left Section: Profile Picture + Username -->
     <div class="col-md-4 text-center">
       {% if profile.profile_picture %}
-      <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+        <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
       {% else %}
-      <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+        <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
       {% endif %}
       <h5 class="mt-2">{{ user.username }}</h5>
     </div>
-    <!-- Right Section: Info + Modal Button -->
+
+    <!-- Right Section: Profile Info + Address -->
     <div class="col-md-8">
       <p><strong>Email:</strong> {{ profile.email }}</p>
       <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
       <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+
       {% if profile.address %}
-        <p><strong>Address Type:</strong> {{ profile.address.get_address_type_display }}</p>
+        <hr>
+        <h5>Address</h5>
+        <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
+        <p><strong>Email:</strong> {{ profile.address.email }}</p>
         <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
         {% if profile.address.address_line_2 %}
           <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
@@ -32,10 +37,12 @@
       {% else %}
         <p>No address linked to profile.</p>
       {% endif %}
+
       <button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#updateModal">Update Profile</button>
     </div>
   </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -47,7 +54,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <h6 class="mb-2">Profile Info</h6>
           {{ form.as_p }}
+          <hr>
+          <h6 class="mb-2">Address Info</h6>
+          {{ address_form.as_p }}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
