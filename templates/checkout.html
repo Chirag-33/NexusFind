@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center fw-bold">Checkout</h1>
+
+    <div class="card shadow-sm p-4">
+        <!-- Order Summary -->
+        <div class="mb-4">
+            <h4 class="mb-3 border-bottom pb-2">🧾 Order Summary</h4>
+            <ul class="list-group list-group-flush mb-3">
+                {% for item in cart.items.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <small class="text-muted">(x{{ item.quantity }})</small>
+                    </div>
+                    <span class="fw-semibold">₹{% widthratio item.product.price 1 item.quantity %}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-between">
+                <p class="mb-0"><strong>Total Price:</strong></p>
+                <p class="mb-0 text-decoration-line-through text-muted">₹{{ original_price|floatformat:2 }}</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="mb-0"><strong>Discounted Price:</strong></p>
+                <p class="mb-0 text-success fw-bold">₹{{ discounted_price|floatformat:2 }}</p>
+            </div>
+        </div>
+
+        <!-- User Details -->
+        <div class="mb-4">
+            <h4 class="mb-3 border-bottom pb-2">👤 User Details</h4>
+        
+            {% if profile.phone_number %}
+            <p><strong>Phone:</strong> {{ profile.phone_number }}</p>
+            {% endif %}
+        
+            {% if profile.email %}
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            {% endif %}
+        
+            {% if profile.address %}
+            <p><strong>Address:</strong></p>
+            <p class="ms-3 text-muted">
+                {% if profile.address.address_line_1 %}{{ profile.address.address_line_1 }}{% endif %}
+                {% if profile.address.address_line_2 %}, {{ profile.address.address_line_2 }}{% endif %}<br>
+                {% if profile.address.city %}{{ profile.address.city }}{% endif %},
+                {% if profile.address.state %}{{ profile.address.state }}{% endif %}<br>
+                {% if profile.address.country %}{{ profile.address.country }}{% endif %}
+                {% if profile.address.pincode %}- {{ profile.address.pincode }}{% endif %}
+            </p>
+            {% else %}
+            <p class="text-muted">No address on file.</p>
+            {% endif %}
+        </div>
+
+        <!-- Payment Option -->
+        <div>
+            <h4 class="mb-3 border-bottom pb-2">💳 Payment Option</h4>
+            <form method="post" action="{% url 'process_payment' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="payment_method" class="form-label">Select Payment Method:</label>
+                    <select class="form-select" name="payment_method" required>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="razorpay">Razorpay</option>
+                        <option value="upi">UPI</option>
+                        <option value="cod">Cash on Delivery (COD)</option>
+                    </select>
+                </div>
+
+                <!-- Coupon -->
+                <div class="mb-3 d-flex align-items-center">
+                    <form method="post" action="{% url 'apply_coupon' %}" class="me-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="coupon_code" placeholder="Enter coupon code"
+                                class="form-control rounded-start" required>
+                            <button type="submit" class="btn btn-success rounded-end">Apply Coupon</button>
+                        </div>
+                    </form>
+                    {% if cart.coupon %}
+                    <form method="post" action="{% url 'remove_coupon' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">Remove</button>
+                    </form>
+                    {% endif %}
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-outline-success px-4" type="submit">Proceed to Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

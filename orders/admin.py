@@ -1,6 +1,5 @@
 from . models import *
 from django.contrib.admin import register
-from unfold.contrib.forms.widgets import WysiwygWidget 
 from unfold.admin import ModelAdmin
 
 @register(Order)
@@ -19,7 +18,6 @@ class CouponAdmin(ModelAdmin):
     list_display = ['code', 'discount_type', 'discount_value', 'is_active', 'valid_from', 'valid_until', 'max_usage', 'max_usage_per_user']
     search_fields = ["code", "title", "description"]
     list_filter = ["is_active", "valid_from", "valid_until", "max_usage", "max_usage_per_user"]
-    formfield_overrides = {models.TextField: {"widget": WysiwygWidget,},}
 
 @register(CouponUsage)
 class CouponUsageAdmin(ModelAdmin):

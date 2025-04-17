@@ -1,26 +1,25 @@
-{%extends 'base.html' %}
-{%block title%}Contact{%endblock title%}
+{% extends 'base.html' %}
+{% block title %}Contact{% endblock title %}
 
-{%block contactactive%} active {%endblock contactactive%}
+{% block contactactive %} active {% endblock contactactive %}
 {% block content %}
 <h3 class="d-flex align-items-center justify-content-center mt-2">Contact Us!</h3>
 {% if request.GET.next %}
 <div class="alert alert-info mt-2">
-    You must be logged in to access that page. 
-    <button class="btn btn-sm btn-dark" data-bs-toggle="modal data-bs-target="#signInModal">Click here to sign in</button>
+    You must be logged in to access that page. <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#signInModal">Click here to sign in</button>
 </div>
 {% else %}
 <form method="post" enctype="multipart/form-data" class="form-group rounded p-3 shadow-lg">
     {% csrf_token %}
     <label for="name">Your Name:</label>
-    <input class="form-control" type="text" id="name" name="name" value="{% if user_name %}{{ user_name }}{% endif %}" required><br>
+    <input class="form-control" type="text" id="name" name="name" value="{% if user_name %}{{ user_name }}{% endif %}" placeholder="Enter your full name" required><br>
     <label for="email">Your Email:</label>
-    <input class="form-control" type="email" id="email" name="email" value="{% if user_email %}{{ user_email }}{% endif %}" required><br>
+    <input class="form-control" type="email" id="email" name="email" value="{% if user_email %}{{ user_email }}{% endif %}" placeholder="Enter your email address" required><br>
     <label for="message">Message:</label><br>
-    <textarea class="form-control" id="message" name="message" cols="40" rows="3" required></textarea><br>
-    <label for="file_path">Attachment (If Any):</label>
-    <input class="form-control" type="file" id="file_path" name="file_path"><br>
+    <textarea class="form-control" id="message" name="message" cols="40" rows="3" placeholder="Write your message here..." required></textarea><br>
+    <label for="file_path">Attachment (If Any, max size: 10MB):</label>
+    <input class="form-control" type="file" id="file_path" name="file_path" accept=".jpg,.jpeg,.png,.pdf"><br>
     <button type="submit" class="btn btn-dark">Submit</button>
 </form>
 {% endif %}
-{% endblock content%}
+{% endblock content %}

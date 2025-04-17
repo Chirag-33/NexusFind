@@ -8,9 +8,9 @@
     <!-- Left Section: Profile Picture + Username -->
     <div class="col-md-4 text-center">
       {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+      <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
       {% else %}
-        <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+      <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
       {% endif %}
       <h5 class="mt-2">{{ user.username }}</h5>
     </div>
@@ -22,20 +22,19 @@
       <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
 
       {% if profile.address %}
-        <hr>
-        <h5>Address</h5>
-        <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
-        <p><strong>Email:</strong> {{ profile.address.email }}</p>
-        <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
-        {% if profile.address.address_line_2 %}
-          <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
-        {% endif %}
-        <p><strong>City:</strong> {{ profile.address.city }}</p>
-        <p><strong>State:</strong> {{ profile.address.state }}</p>
-        <p><strong>Country:</strong> {{ profile.address.country }}</p>
-        <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
+      <hr>
+      <h5>Address</h5>
+      <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
+      <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
+      {% if profile.address.address_line_2 %}
+      <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
+      {% endif %}
+      <p><strong>City:</strong> {{ profile.address.city }}</p>
+      <p><strong>State:</strong> {{ profile.address.state }}</p>
+      <p><strong>Country:</strong> {{ profile.address.country }}</p>
+      <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
       {% else %}
-        <p>No address linked to profile.</p>
+      <p>No address linked to profile.</p>
       {% endif %}
 
       <button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#updateModal">Update Profile</button>

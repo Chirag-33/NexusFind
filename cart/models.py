@@ -15,9 +15,16 @@ class Cart(models.Model):
     def calculate_discounted_price(self):
         total = self.calculate_original_price()
         if self.coupon and self.coupon.is_active and self.coupon.valid_from <= now() and self.coupon.valid_until >= now():
-            if self.coupon.discount_type == "PERCENT": total -= total * (self.coupon.discount_value / 100)
-            elif self.coupon.discount_type == "FLAT": total -= self.coupon.discount_value
+            if self.coupon.discount_type == "PERCENT":
+                total -= total * (self.coupon.discount_value / 100)
+            elif self.coupon.discount_type == "FLAT":
+                total -= self.coupon.discount_value
         return max(total, 0)
+
+    @classmethod
+    def get_cart(cls, user, cart_type='regular'):
+        is_buy_now = cart_type == 'buy_now'
+        return cls.objects.get_or_create(user=user, is_buy_now=is_buy_now)[0]
 
     class Meta:
         verbose_name = "Cart"
