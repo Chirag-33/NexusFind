@@ -1,20 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock title %}
-
 {% block homeactive %} active {% endblock homeactive %}
 
 {% block content %}
+<!-- Hero Carousel -->
 <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-    <!-- Indicators -->
     <div class="carousel-indicators">
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true"
-            aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
     </div>
 
-    <!-- Carousel -->
     <div class="carousel-inner rounded-5 shadow mt-2" style="height: 42rem; width: auto;">
         <div class="carousel-item active" data-bs-interval="1800">
             <img src="https://cdn.pixabay.com/photo/2019/12/14/08/36/shopping-4694470_1280.jpg" class="d-block w-100" alt="Online Shopping" style="object-fit: cover;">
@@ -23,14 +20,13 @@
             <img src="https://tse3.mm.bing.net/th/id/OIP.GPLvW3bF2qiexYN-NyvcHwHaFj" class="d-block w-100" alt="Electronics" style="object-fit: cover;">
         </div>
         <div class="carousel-item" data-bs-interval="1800">
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff" class="d-block w-100" alt="Shoes", style="object-fit: cover;">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff" class="d-block w-100" alt="Shoes" style="object-fit: cover;">
         </div>
         <div class="carousel-item" data-bs-interval="1800">
             <img src="https://images.unsplash.com/photo-1627384113972-f4c0392fe5aa" class="d-block w-100" alt="Cookware" style="object-fit: cover;">
         </div>
     </div>
 
-    <!-- Controls -->
     <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev" aria-label="Previous Slide">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     </button>
@@ -51,23 +47,20 @@
 <div class="container marketing">
     <div class="row justify-content-center">
         <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
-            <a href="" class="text-decoration-none text-dark">
-                <img src="https://images.pexels.com/photos/7974/pexels-photo.jpg" class="rounded-circle mb-3"
-                    alt="Electronics" style="object-fit: cover; width: 150px; height: 150px;">
+            <a href="#" class="text-decoration-none text-dark">
+                <img src="https://images.pexels.com/photos/7974/pexels-photo.jpg" class="rounded-circle mb-3" alt="Electronics" style="object-fit: cover; width: 150px; height: 150px;">
                 <h2 class="fw-bold">Electronics</h2>
             </a>
         </div>
         <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
-            <a href="" class="text-decoration-none text-dark">
-                <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3" class="rounded-circle mb-3"
-                    alt="Clothing" style="object-fit: cover; width: 150px; height: 150px;">
+            <a href="#" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3" class="rounded-circle mb-3" alt="Clothing" style="object-fit: cover; width: 150px; height: 150px;">
                 <h2 class="fw-bold">Clothing</h2>
             </a>
         </div>
         <div class="col-lg-4 d-flex flex-column align-items-center mb-4">
-            <a href="" class="text-decoration-none text-dark">
-                <img src="https://images.unsplash.com/photo-1624031000828-dba1b7a3e4ce" class="rounded-circle mb-3"
-                    alt="Cookware" style="object-fit: cover; width: 150px; height: 150px;">
+            <a href="#" class="text-decoration-none text-dark">
+                <img src="https://images.unsplash.com/photo-1624031000828-dba1b7a3e4ce" class="rounded-circle mb-3" alt="Cookware" style="object-fit: cover; width: 150px; height: 150px;">
                 <h2 class="fw-bold">Cookware</h2>
             </a>
         </div>
@@ -75,46 +68,68 @@
 </div>
 
 <!-- Featured Products Section -->
-<div class="container mt-1">
+<div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Featured Products</h2>
         <div>
-            <button class="btn btn-outline-secondary me-2" data-bs-target="#similar-products-slider" data-bs-slide="prev">&#60;</button>
-            <button class="btn btn-outline-secondary" data-bs-target="#similar-products-slider" data-bs-slide="next">&#62;</button>
+            <button class="btn btn-outline-secondary me-2" id="scrollLeft">&#60;</button>
+            <button class="btn btn-outline-secondary" id="scrollRight">&#62;</button>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for product in products %}
-        <div class="col">
-            <div class="card h-100 text-center">
-                <a href="{% url 'product_detail' product.id %}">
-                    <div class="ratio ratio-4x3">
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
-                    </div>
-                </a>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center fw-bold">{{ product.name }}</h5>
-                    <div class="d-flex justify-content-between gap-2 mt-auto">
-                        {% if user.is_authenticated %}
-                        <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
-                            {% csrf_token %}
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-outline-dark btn-sm w-100">Add to Cart</button>
-                        </form>
-                        <form action="{% url 'buy_now' product.id %}" method="post" class="flex-grow-1">
-                            {% csrf_token %}
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-dark btn-sm w-100">Buy Now</button>
-                        </form>
-                        {% else %}
-                        <button class="btn btn-outline-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Add</button>
-                        <button class="btn btn-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Buy</button>
-                        {% endif %}
+
+    <div class="position-relative">
+        <div id="productSliderWrapper" class="overflow-hidden w-100">
+            <div id="productSlider" class="d-flex" style="gap: 1rem; transition: transform 0.3s ease;">
+                {% for product in products %}
+                <div class="card flex-shrink-0 mx-2" style="width: 220px;">
+                    <a href="{% url 'product_detail' product.id %}">
+                        <div class="ratio ratio-4x3">
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover;">
+                        </div>
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-center fw-bold">{{ product.name }}</h5>
+                        <div class="d-flex justify-content-between gap-2 mt-auto">
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'add_cart_item' product.id %}" method="post" class="flex-grow-1">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-outline-dark btn-sm w-100">Add</button>
+                            </form>
+                            <form action="{% url 'buy_now' product.id %}" method="post" class="flex-grow-1">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-dark btn-sm w-100">Buy</button>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-outline-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login</button>
+                            <button class="btn btn-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login</button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
+
+<!-- Scroll Buttons Script -->
+<script>
+    const scrollStep = 240 * 3; // Scroll by 3 cards width at a time
+    const slider = document.getElementById('productSlider');
+    const wrapper = document.getElementById('productSliderWrapper');
+    let scrollX = 0;
+
+    document.getElementById('scrollLeft').addEventListener('click', () => {
+        scrollX = Math.max(scrollX - scrollStep, 0);
+        slider.style.transform = `translateX(-${scrollX}px)`;
+    });
+
+    document.getElementById('scrollRight').addEventListener('click', () => {
+        const maxScroll = slider.scrollWidth - wrapper.clientWidth;
+        scrollX = Math.min(scrollX + scrollStep, maxScroll);
+        slider.style.transform = `translateX(-${scrollX}px)`;
+    });
+</script>
 {% endblock content %}
