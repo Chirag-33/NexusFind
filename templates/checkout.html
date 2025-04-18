@@ -35,16 +35,21 @@
             <h4 class="mb-3 border-bottom pb-2">👤 User Details</h4>
         
             {% if address %}
-                <p><strong>Address:</strong></p>
-                <p class="ms-3 text-muted">
-                    {{ address.address_line_1 }}
-                    {% if address.address_line_2 %}, {{ address.address_line_2 }}{% endif %}<br>
-                    {{ address.city }}, {{ address.state }}<br>
-                    {{ address.country }} - {{ address.pincode }}
-                </p>
-                    {% else %}
-                        <p class="text-muted">No address on file.</p>
-                    {% endif %}
+            <p class="mb-1"><strong>Address Details:</strong></p>
+            <ul class="list-unstyled ms-3 text-muted">
+                <li><strong>Line 1:</strong> {{ address.address_line_1 }}</li>
+                {% if address.address_line_2 %}
+                <li><strong>Line 2:</strong> {{ address.address_line_2 }}</li>
+                {% endif %}
+                <li><strong>City:</strong> {{ address.city }}</li>
+                <li><strong>State:</strong> {{ address.state }}</li>
+                <li><strong>Country:</strong> {{ address.country }}</li>
+                <li><strong>Pincode:</strong> {{ address.pincode }}</li>
+            </ul>
+        {% else %}
+            <p class="text-muted">No address on file.</p>
+        {% endif %}
+        
 
         <!-- Payment Option -->
         <div>

@@ -64,7 +64,7 @@
     </div>
     <!-- Proceed to Checkout -->
         <div class="text-end">
-            <a href="{% url 'checkout' %}?type={{ cart_type }}" class="btn btn-dark btn-lg">Proceed to Checkout</a>
+            <a href="{% url 'orders:checkout' %}?type={{ cart_type }}" class="btn btn-dark btn-lg">Proceed to Checkout</a>
         </div>
 
     {% else %}
