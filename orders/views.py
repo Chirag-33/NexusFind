@@ -12,23 +12,36 @@ def generate_tracking_id():
 
 @login_required
 def checkout(request):
+    raise Exception("Is this thing even running")
     user = request.user
     profile, _ = Profile.objects.get_or_create(user=user, defaults={'email': user.email})
+    
     if user.email and profile.email != user.email:
         profile.email = user.email
         profile.save()
+    
     cart = request.user.cart
     original_price = cart.total_price
     discounted_price = original_price - cart.discount_applied
     random_tracking_id = generate_tracking_id()
 
+    address = CustomerAddress.objects.filter(user=user).first()
+
+    if not address:
+        raise Exception("❌ No address found for this user!")
+    else:
+        raise Exception(f"✅ Address found: {address.address_line_1}")
+
+    
     return render(request, 'checkout.html', {
         'cart': cart,
         'original_price': original_price,
         'discounted_price': discounted_price,
         'random_tracking_id': random_tracking_id,
         'profile': profile,
-    })
+        'address': address
+    })  
+
 
 @login_required
 def process_payment(request):

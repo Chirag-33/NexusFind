@@ -234,3 +234,4 @@ def info_page_view(request, page_type):
         return render(request, '404.html', status=400)
 
     return render(request, 'info_page_view.html', {"page_type": page_type})
+

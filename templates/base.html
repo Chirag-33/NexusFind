@@ -61,6 +61,78 @@
     </div>
     {% endfor %}
 
+    <!-- Sign In Modal -->
+    <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center" id="signInModalLabel">Sign In</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Sign In Form -->
+                    <form method="POST" action="{% url 'signin' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.GET.next|default:request.path }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username or Email</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-dark flex-grow-1 m-2">Sign In</button>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-dark flex-grow-1">Sign In with Google</a> 
+                        </div>           
+                    </form>
+                    <p>Don't have an Account? <a class="btn btn-link pt-0" data-bs-toggle="modal" data-bs-target="#signUpModal">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signUpModal" tabindex="-1" aria-labelledby="signUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center" id="signUpModalLabel">Sign Up</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Sign Up Form -->
+                    <form method="POST" action="{% url 'signup' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.GET.next|default:request.path }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your Username (lowercase & Alphanumeric)" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-dark m-2">Sign Up</button>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-dark flex-grow-1">Sign Up with Google</a>
+                        </div>
+                    </form>
+                    <p>Already have an Account? <a class="btn btn-link pt-0" data-bs-toggle="modal" data-bs-target="#signInModal">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main content wrapper with flex-grow -->
     <main class="container pt-2 flex-grow-1">
         {% block content %}{% endblock content %}
