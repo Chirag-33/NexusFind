@@ -33,6 +33,9 @@
         <!-- User Details -->
         <div class="mb-4">
             <h4 class="mb-3 border-bottom pb-2">👤 User Details</h4>
+            {% if profile %}
+                <li><strong>Email:</strong> {{ profile.email }}</li>
+            {% endif %}
         
             {% if address %}
             <p class="mb-1"><strong>Address Details:</strong></p>

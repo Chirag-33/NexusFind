@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import *
-from orders.views import process_payment
 
 urlpatterns = [
     path('', CartDetailView.as_view(), name='cart_detail'),
@@ -12,5 +11,5 @@ urlpatterns = [
     path('remove_coupon/', RemoveCouponView.as_view(), name='remove_coupon'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('place-order/', PlaceOrderView.as_view(), name='place_order'),
-    path('process-payment/', process_payment, name='process_payment'),
+    path('process-payment/', process_order_payment, name='process_payment'),
 ]

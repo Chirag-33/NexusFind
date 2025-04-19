@@ -8,6 +8,8 @@ from django.contrib import messages
 from cart.models import Cart, CartItem
 from products.models import Product
 from orders.models import Order, Coupon, CouponUsage
+from django.contrib.auth.decorators import login_required
+
 
 class CartDetailView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -120,27 +122,31 @@ class PlaceOrderView(LoginRequiredMixin, View):
         messages.success(request, 'Your order placed successfully!')
         return redirect('home')
 
-def process_payment(request):
+@login_required
+def process_order_payment(request):
     if request.method == 'POST':
-        payment_method = request.POST.get('payment_method')
         cart_type = request.POST.get('cart_type', 'regular')
         cart = Cart.get_cart(request.user, cart_type)
 
         order = Order.objects.create(
             user=request.user,
             status="PENDING",
-            total_price=cart.calculate_original_price(),
-            discount_applied=cart.calculate_original_price() - cart.calculate_discounted_price(),
-            final_price=cart.calculate_discounted_price(),
             delivery_address=request.user.profile.address,
         )
+        
+        payment_method = request.POST.get('payment_method')
 
-        if payment_method in ['card', 'razorpay']:
+        if payment_method == 'card':
             return redirect('razorpay_checkout', order_id=order.id)
+
+        elif payment_method == 'razorpay':
+            return redirect('razorpay_checkout', order_id=order.id)
+
         elif payment_method == 'upi':
             order.status = 'COMPLETED'
             order.save()
             return redirect('order_success', order_id=order.id)
+
         elif payment_method == 'cod':
             order.status = 'PENDING'
             order.save()

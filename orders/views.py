@@ -10,7 +10,7 @@ from products.models import Profile
 def generate_tracking_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
-from cart.models import Cart  # make sure this import is there
+from cart.models import Cart
 
 @login_required
 def checkout(request):
@@ -45,37 +45,3 @@ def checkout(request):
 
 
 
-@login_required
-def process_payment(request):
-    if request.method == 'POST':
-        cart_type = request.POST.get('cart_type', 'regular')
-        cart = get_cart(request.user, cart_type)
-
-        order = Order.objects.create(
-            user=request.user,
-            status="PENDING",
-            total_price=cart.total_price,
-            discount_applied=cart.discount_applied,
-            final_price=cart.final_price,
-            delivery_address=request.user.profile.address,
-        )
-        
-        payment_method = request.POST.get('payment_method')
-
-        if payment_method == 'card':
-            return redirect('razorpay_checkout', order_id=order.id)
-
-        elif payment_method == 'razorpay':
-            return redirect('razorpay_checkout', order_id=order.id)
-
-        elif payment_method == 'upi':
-            order.status = 'COMPLETED'
-            order.save()
-            return redirect('order_success', order_id=order.id)
-
-        elif payment_method == 'cod':
-            order.status = 'PENDING'
-            order.save()
-            return redirect('order_success', order_id=order.id)
-
-    return HttpResponse("Invalid Request", status=400)
