@@ -40,9 +40,9 @@ class Profile(models.Model):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['email','profile_picture','phone_number']
 
 class CustomerAddressForm(forms.ModelForm):
     class Meta:
         model = CustomerAddress
-        fields = '__all__'
+        fields = ['address_line_1','address_line_2','address_type','city','state','country','pincode']

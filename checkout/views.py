@@ -5,11 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from cart.models import CartItem
+from .models import Cart,CartItem,Order
 from products.models import Product
-from orders.models import Order
-from products.models import Profile
-from customer.models import CustomerAddress
+from customer.models import CustomerAddress, Profile
 from .utils import get_cart_and_type, generate_tracking_id, apply_coupon_to_cart, clear_buy_now_cart
 
 class CartDetailView(LoginRequiredMixin, View):
@@ -69,29 +67,41 @@ class BuyNowView(LoginRequiredMixin, View):
 
 class ApplyCouponView(LoginRequiredMixin, View):
     def post(self, request):
+        cart_type = request.POST.get('cart_type', 'regular')
+        cart = Cart.get_cart(request.user, cart_type)
         coupon_code = request.POST.get('coupon_code')
-        cart = Cart.get_cart(request.user)
         success = apply_coupon_to_cart(cart, coupon_code, request.user)
         if success:
             messages.success(request, "Coupon applied successfully.")
         else:
             messages.error(request, "Invalid or expired coupon.")
-        return redirect('cart_detail')
+        return redirect(f"{reverse('checkout')}?type={cart_type}")
 
 class RemoveCouponView(LoginRequiredMixin, View):
     def post(self, request):
-        cart = Cart.get_cart(request.user)
+        cart_type = request.POST.get('cart_type', 'regular')
+        cart = Cart.get_cart(request.user, cart_type)
         cart.coupon = None
         cart.save()
         messages.info(request, "Coupon removed.")
-        return redirect('cart_detail')
+        return redirect(f"{reverse('checkout')}?type={cart_type}")
 
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, request):
         cart, cart_type = get_cart_and_type(request)
+        payment_method = request.GET.get("payment_method", "card")
         if not cart.items.exists():
             return redirect('cart_detail')
-        return render(request, 'checkout.html', {'cart': cart, 'original_price': cart.calculate_original_price(), 'discounted_price': cart.calculate_discounted_price(), 'cart_type': cart_type})
+        return render(request, 'checkout.html', {
+            'cart': cart,
+            'cart_type': cart_type,
+            'original_price': cart.calculate_original_price(),
+            'discounted_price': cart.calculate_discounted_price(),
+            'payment_method': payment_method,
+            'profile': getattr(request.user, 'profile', None),
+            'address': getattr(request.user.profile, 'address', None) if hasattr(request.user, 'profile') else None
+        })
+
 
 class PlaceOrderView(LoginRequiredMixin, View):
     def post(self, request):

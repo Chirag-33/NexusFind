@@ -35,7 +35,7 @@
       <p><strong>Country:</strong> {{ profile.address.country }}</p>
       <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
       {% else %}
-      <p>No address linked to profile. <a href="{% url 'add_address' %}">Add Address</a></p>
+      <p>No address linked to profile.</p>
       {% endif %}
       <button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#updateModal">Update Profile</button>
     </div>
