@@ -1,41 +1,31 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.utils.timezone import now
 from django.contrib import messages
-from cart.models import Cart, CartItem
+from cart.models import CartItem
 from products.models import Product
-from orders.models import Order, Coupon, CouponUsage
-from django.contrib.auth.decorators import login_required
-
+from orders.models import Order
+from products.models import Profile
+from customer.models import CustomerAddress
+from .utils import get_cart_and_type, generate_tracking_id, apply_coupon_to_cart, clear_buy_now_cart
 
 class CartDetailView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        cart_type = request.GET.get('type', 'regular')
-        cart = Cart.get_cart(request.user, cart_type)
-        return render(request, 'cart_detail.html', {
-            'cart': cart,
-            'cart_type': cart_type,
-            'original_price': cart.calculate_original_price(),
-            'discounted_price': cart.calculate_discounted_price(),
-        })
+        cart, cart_type = get_cart_and_type(request)
+        return render(request, 'cart_detail.html', {'cart': cart, 'cart_type': cart_type, 'original_price': cart.calculate_original_price(), 'discounted_price': cart.calculate_discounted_price()})
 
 class AddCartItemView(LoginRequiredMixin, View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         quantity = int(request.POST.get('quantity', 1))
-        cart_type = request.GET.get('type', 'regular')
-        cart = Cart.get_cart(request.user, cart_type)
+        cart, cart_type = get_cart_and_type(request)
         existing_item = cart.items.filter(product=product).first()
         if cart_type == 'buy_now':
-            if existing_item:
-                existing_item.quantity += quantity
-                existing_item.save()
-            else:
-                cart.items.all().delete()
-                CartItem.objects.create(cart=cart, product=product, quantity=quantity, price=product.price)
+            cart.items.all().delete()
+            CartItem.objects.create(cart=cart, product=product, quantity=quantity, price=product.price)
         else:
             if existing_item:
                 existing_item.quantity += quantity
@@ -62,10 +52,10 @@ class RemoveCartItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
         cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
         cart = cart_item.cart
-        cart_type = "buy_now" if cart.is_buy_now else "regular"
         cart_item.delete()
         if cart.is_buy_now and not cart.items.exists():
             cart.delete()
+        cart_type = "buy_now" if cart.is_buy_now else "regular"
         return HttpResponseRedirect(f'/cart/?type={cart_type}')
 
 class BuyNowView(LoginRequiredMixin, View):
@@ -81,15 +71,11 @@ class ApplyCouponView(LoginRequiredMixin, View):
     def post(self, request):
         coupon_code = request.POST.get('coupon_code')
         cart = Cart.get_cart(request.user)
-        coupon = Coupon.objects.filter(code=coupon_code, is_active=True).first()
-        if coupon:
-            now_time = now()
-            if coupon.valid_from <= now_time <= coupon.valid_until:
-                user_usage = CouponUsage.objects.filter(user=request.user, coupon=coupon).count()
-                if not coupon.max_usage_per_user or user_usage < coupon.max_usage_per_user:
-                    cart.coupon = coupon
-                    cart.save()
-                    CouponUsage.objects.create(user=request.user, coupon=coupon)
+        success = apply_coupon_to_cart(cart, coupon_code, request.user)
+        if success:
+            messages.success(request, "Coupon applied successfully.")
+        else:
+            messages.error(request, "Invalid or expired coupon.")
         return redirect('cart_detail')
 
 class RemoveCouponView(LoginRequiredMixin, View):
@@ -97,20 +83,15 @@ class RemoveCouponView(LoginRequiredMixin, View):
         cart = Cart.get_cart(request.user)
         cart.coupon = None
         cart.save()
+        messages.info(request, "Coupon removed.")
         return redirect('cart_detail')
 
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, request):
-        cart_type = request.GET.get('type', 'regular')
-        cart = Cart.get_cart(request.user, cart_type)
+        cart, cart_type = get_cart_and_type(request)
         if not cart.items.exists():
             return redirect('cart_detail')
-        return render(request, 'checkout.html', {
-            'cart': cart,
-            'original_price': cart.calculate_original_price(),
-            'discounted_price': cart.calculate_discounted_price(),
-            'cart_type': cart_type,
-        })
+        return render(request, 'checkout.html', {'cart': cart, 'original_price': cart.calculate_original_price(), 'discounted_price': cart.calculate_discounted_price(), 'cart_type': cart_type})
 
 class PlaceOrderView(LoginRequiredMixin, View):
     def post(self, request):
@@ -127,29 +108,18 @@ def process_order_payment(request):
     if request.method == 'POST':
         cart_type = request.POST.get('cart_type', 'regular')
         cart = Cart.get_cart(request.user, cart_type)
-
-        order = Order.objects.create(
-            user=request.user,
-            status="PENDING",
-            delivery_address=request.user.profile.address,
-        )
-        
+        if not cart.items.exists():
+            return HttpResponse("Your cart is empty.", status=400)
         payment_method = request.POST.get('payment_method')
-
-        if payment_method == 'card':
+        if payment_method not in ['card', 'razorpay', 'upi', 'cod']:
+            return HttpResponse("Invalid payment method", status=400)
+        order = Order.objects.create(user=request.user, status="PENDING", delivery_address=request.user.profile.address, total_price=cart.calculate_original_price(), discount_applied=cart.calculate_original_price() - cart.calculate_discounted_price(), final_price=cart.calculate_discounted_price())
+        if payment_method in ['card', 'razorpay']:
             return redirect('razorpay_checkout', order_id=order.id)
-
-        elif payment_method == 'razorpay':
-            return redirect('razorpay_checkout', order_id=order.id)
-
-        elif payment_method == 'upi':
+        if payment_method == 'upi':
             order.status = 'COMPLETED'
-            order.save()
-            return redirect('order_success', order_id=order.id)
-
         elif payment_method == 'cod':
             order.status = 'PENDING'
-            order.save()
-            return redirect('order_success', order_id=order.id)
-
+        order.save()
+        return redirect('order_success', order_id=order.id)
     return HttpResponse("Invalid Request", status=400)

@@ -4,23 +4,17 @@
 {% block content %}
 <div class="container m-5">
     <h1 class="mb-4">Shopping Cart</h1>
-
     {% if cart.items.exists %}
     {% for item in cart.items.all %}
     <div class="card mb-3 position-relative">
-        <!-- 🗑 Remove Text Button -->
         <form method="post" action="{% url 'remove_cart_item' item.id %}?type={{ cart_type }}"
             class="position-absolute top-0 end-0 m-2" onsubmit="return confirm('Remove this item from cart?');">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none" title="Remove">
-                Remove
-            </button>
+            <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none" title="Remove">Remove</button>
         </form>
-
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
-                    style="object-fit: cover; width: 100%; height: 100%; max-height: 200px;">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="object-fit: cover; width: 100%; height: 100%; max-height: 200px;">
             </div>
             <div class="col-md-8">
                 <div class="card-body d-flex flex-column justify-content-between h-100 py-2">
@@ -31,23 +25,19 @@
                         <p class="card-text fw-bold">Total: ₹{% widthratio item.product.price 1 item.quantity %}</p>
                     </div>
                     <div class="d-flex gap-2 mt-2">
-                        <form method="post" action="{% url 'add_cart_item' item.product.id %}?type={{ cart_type }}"
-                            class="d-inline">
+                        <form method="post" action="{% url 'add_cart_item' item.product.id %}?type={{ cart_type }}" class="d-inline">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="btn btn-outline-success btn-sm">+</button>
                         </form>
-
                         {% if item.quantity > 1 %}
-                        <form method="post" action="{% url 'update_cart_item' item.id %}?type={{ cart_type }}"
-                            class="d-inline">
+                        <form method="post" action="{% url 'update_cart_item' item.id %}?type={{ cart_type }}" class="d-inline">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}">
                             <button type="submit" class="btn btn-outline-warning btn-sm">−</button>
                         </form>
                         {% else %}
-                        <form method="post" action="{% url 'remove_cart_item' item.id %}?type={{ cart_type }}"
-                            class="d-inline">
+                        <form method="post" action="{% url 'remove_cart_item' item.id %}?type={{ cart_type }}" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-danger btn-sm">×</button>
                         </form>
@@ -63,10 +53,9 @@
         <p><strong>Discounted Price:</strong> ₹{{ discounted_price|floatformat:2 }}</p>
     </div>
     <!-- Proceed to Checkout -->
-        <div class="text-end">
-            <a href="{% url 'checkout' %}?type={{ cart_type }}" class="btn btn-dark btn-lg">Proceed to Checkout</a>
-        </div>
-
+    <div class="text-end">
+        <a href="{% url 'checkout' %}?type={{ cart_type }}" class="btn btn-dark btn-lg">Proceed to Checkout</a>
+    </div>
     {% else %}
     <!-- Empty Cart -->
     <div class="alert alert-info text-center py-5">

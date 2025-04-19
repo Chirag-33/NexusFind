@@ -7,15 +7,16 @@
     <div class="row g-4 align-items-start">
         <!-- Product Image -->
         <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow" style="object-fit: cover; max-height: 450px; max-width: 100%;">
+            <div id="product-image-container">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow" style="object-fit: cover; max-height: 450px; max-width: 100%;" id="product-image">
+            </div>
         </div>
-
         <!-- Product Details -->
         <div class="col-md-6 d-flex flex-column justify-content-between">
             <div class="card shadow-sm p-4">
                 <h2 class="fw-bold text-dark mb-3">{{ product.name }}</h2>
                 <p><strong>Category:</strong> <span class="text-muted">{{ product.category }}</span></p>
-                <p><strong>Price:</strong> <span class="text-success fs-4">₹{{ product.price }}</span></p>
+                <p><strong>Price:</strong><span class="text-success fs-4">₹{{ product.price|floatformat:2 }}</span></p>
                 <p><strong>Description:</strong> <span class="text-muted">{{ product.description }}</span></p>
                 <div class="d-flex mt-4">
                     <form method="post" action="{% url 'add_cart_item' product.id %}?type=regular" class="d-flex flex-grow-1 me-2">
@@ -81,7 +82,6 @@
         <p class="text-muted">No comments yet. Be the first to comment!</p>
         {% endfor %}
     </div>
-
     <!-- Similar Products Slider -->
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -101,7 +101,7 @@
                                 <img src="{{ other_product.image.url }}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="{{ other_product.name }}">
                                 <div class="card-body p-2">
                                     <p class="card-title fw-semibold small mb-1">{{ other_product.name }}</p>
-                                    <p class="text-success small mb-0">₹{{ other_product.price }}</p>
+                                    <p class="text-success small mb-0">₹{{ other_product.price|floatformat:2 }}</p>
                                 </div>
                             </div>
                         </a>

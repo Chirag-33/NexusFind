@@ -11,8 +11,7 @@
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
     </div>
-
-    <div class="carousel-inner rounded-5 shadow mt-2" style="height: 42rem; width: auto;">
+    <div class="carousel-inner rounded-5 shadow mt-2" style="height: 42rem;">
         <div class="carousel-item active" data-bs-interval="1800">
             <img src="https://cdn.pixabay.com/photo/2019/12/14/08/36/shopping-4694470_1280.jpg" class="d-block w-100" alt="Online Shopping" style="object-fit: cover;">
         </div>
@@ -26,7 +25,6 @@
             <img src="https://images.unsplash.com/photo-1627384113972-f4c0392fe5aa" class="d-block w-100" alt="Cookware" style="object-fit: cover;">
         </div>
     </div>
-
     <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev" aria-label="Previous Slide">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     </button>
@@ -76,7 +74,6 @@
             <button class="btn btn-outline-secondary" id="scrollRight">&#62;</button>
         </div>
     </div>
-
     <div class="position-relative mb-5">
         <div id="productSliderWrapper" class="overflow-hidden w-100">
             <div id="productSlider" class="d-flex" style="gap: 1rem; transition: transform 0.3s ease;">
@@ -102,7 +99,7 @@
                                 <button type="submit" class="btn btn-dark btn-sm w-100">Buy</button>
                             </form>
                             {% else %}
-                            <button class="btn btn-outline-dark  btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#signInModal">Login to Proceed</button>
+                            <button class="btn btn-outline-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Proceed</button>
                             {% endif %}
                         </div>
                     </div>
@@ -113,7 +110,6 @@
     </div>
 </div>
 
-<!-- Scroll Buttons Script -->
 <script>
     const scrollStep = 240 * 3; // Scroll by 3 cards width at a time
     const slider = document.getElementById('productSlider');
