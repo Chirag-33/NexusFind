@@ -4,7 +4,6 @@ from products.models import Product
 from django.utils.timezone import now
 from customer.models import CustomerAddress
 
-
 class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True)
     title = models.CharField(max_length=100, blank=True, null=True)

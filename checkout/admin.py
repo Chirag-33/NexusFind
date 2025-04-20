@@ -1,10 +1,6 @@
 from django.contrib.admin import register
 from unfold.admin import ModelAdmin
-from .models import (
-    Cart, CartItem,
-    Order, OrderItem,
-    Coupon, CouponUsage
-)
+from .models import Cart, CartItem, Order, OrderItem, Coupon, CouponUsage
 
 @register(Cart)
 class CartAdmin(ModelAdmin):

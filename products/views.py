@@ -7,6 +7,7 @@ from django.views import View
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Contact, Product, ProductHistory, Comment
+from customer.models import Profile
 
 # Home View
 class HomeView(View):
@@ -21,29 +22,21 @@ class AboutView(View):
 
 # Contact View
 class ContactView(View):
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            next_url = request.path
-            messages.info(request, "Please sign in to access the Contact page.")
-            return redirect(f"/home/?next={next_url}")
-        return super().dispatch(request, *args, **kwargs)
-
     def get(self, request):
-        context = {'title': 'Contact', 'user_name': request.user.username, 'user_email': request.user.email}
-        return render(request, 'contact.html', context)
+        user_email = request.user.profile.email
+        return render(request, 'contact.html', {'title': 'Contact', 'user_name': request.user.username if request.user.is_authenticated else '', 'user_email': user_email if request.user.is_authenticated else '', 'show_login_prompt': not request.user.is_authenticated})
 
     def post(self, request):
-        user_name = request.POST.get('name')
-        user_email = request.POST.get('email')
+        if not request.user.is_authenticated:
+            messages.info(request, "Please sign in to send a message.")
+            return redirect('/contact/?next=' + request.path)
+        user_name = request.user.username
+        user_email = request.user.email
         user_message = request.POST.get('message')
         attachment = request.FILES.get('file_path')
-        if request.user.is_authenticated:
-            user_name = request.user.username
-            user_email = request.user.email
-        if not request.user.is_authenticated:
-            if len(user_name) < 2 or not re.match(r"[^@]+@[^@]+\.[^@]+", user_email) or len(user_message) < 4:
-                messages.error(request, 'Invalid form data! Please check your name, email, and message.')
-                return redirect('contact')
+        if len(user_message.strip()) < 4:
+            messages.error(request, 'Message too short. Please enter a more detailed message.')
+            return redirect('contact')
         contact = Contact(name=user_name, email=user_email, message=user_message, file_path=attachment)
         contact.save()
         messages.success(request, 'Your message has been sent successfully!')

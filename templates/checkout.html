@@ -5,7 +5,6 @@
 <div class="container mt-5">
     <h1 class="mb-4 text-center fw-bold">Checkout</h1>
     <div class="card shadow-sm p-4">
-
         <!-- Order Summary -->
         <div class="mb-4">
             <h4 class="mb-3 border-bottom pb-2">🧾 Order Summary</h4>
@@ -13,6 +12,7 @@
                 {% for item in cart.items.all %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 40px; height: 40px; object-fit: cover;" class="me-2 rounded">
                         <strong>{{ item.product.name }}</strong>
                         <small class="text-muted">(x{{ item.quantity }})</small>
                     </div>
@@ -20,7 +20,6 @@
                 </li>
                 {% endfor %}
             </ul>
-
             {% if cart.coupon %}
             <div class="d-flex justify-content-between">
                 <p class="mb-0"><strong>Total Price:</strong></p>
@@ -37,14 +36,13 @@
             </div>
             {% endif %}
         </div>
-
         <!-- User Details -->
         <div class="mb-4">
             <h4 class="mb-3 border-bottom pb-2">👤 User Details</h4>
             {% if profile %}
-            <ul class="list-unstyled" > 
+            <ul class="list-unstyled">
                 <li><strong>Email:</strong> {{ profile.email }}</li>
-                <li><strong>Phone:</strong> {{profile.phone_number}} </li>
+                <li><strong>Phone:</strong> {{ profile.phone_number }}</li>
             </ul>
             {% endif %}
             {% if address %}
@@ -63,7 +61,6 @@
             <p class="text-muted">No address on file.</p>
             {% endif %}
         </div>
-
         <!-- Coupon Code -->
         <div class="mb-4">
             <h4 class="mb-3 border-bottom pb-2">🎟️ Coupon Code</h4>
@@ -72,17 +69,14 @@
                 {% csrf_token %}
                 <input type="hidden" name="cart_type" value="{{ cart_type }}">
                 <div class="input-group">
-                    <input type="text" name="coupon_code" placeholder="Enter coupon code"
-                        class="form-control rounded-start" required>
+                    <input type="text" name="coupon_code" placeholder="Enter coupon code" class="form-control rounded-start" required>
                     <button type="submit" class="btn btn-success rounded-end">Apply Coupon</button>
                 </div>
             </form>
             {% endif %}
-
             {% if cart.coupon %}
             <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0 text-success">
-                    The coupon you applied: <strong>"{{ cart.coupon.code }}"</strong>
+                <p class="mb-0 text-success">The coupon you applied: <strong>"{{ cart.coupon.code }}"</strong>
                 </p>
                 <form method="post" action="{% url 'remove_coupon' %}" class="ms-3 mb-0">
                     {% csrf_token %}
@@ -92,7 +86,6 @@
             </div>
             {% endif %}
         </div>
-
         <!-- Payment Method Selection -->
         <div class="mb-4">
             <h4 class="mb-3 border-bottom pb-2">💳 Payment Option</h4>
@@ -102,52 +95,55 @@
                 <select class="form-select" name="payment_method" id="payment_method" onchange="this.form.submit()">
                     <option value="card" {% if payment_method == 'card' %}selected{% endif %}>Credit/Debit Card</option>
                     <option value="upi" {% if payment_method == 'upi' %}selected{% endif %}>UPI</option>
-                    <option value="cod" {% if payment_method == 'cod' %}selected{% endif %}>Cash on Delivery (COD)</option>
+                    <option value="cod" {% if payment_method == 'cod' %}selected{% endif %}>Cash on Delivery (COD)
+                    </option>
                 </select>
             </form>
         </div>
-
         <!-- Payment Fields & Submit -->
         <form method="post" action="{% url 'process_payment' %}">
             {% csrf_token %}
             <input type="hidden" name="cart_type" value="{{ cart_type }}">
             <input type="hidden" name="payment_method" value="{{ payment_method }}">
-
             {% if payment_method == 'card' %}
             <div class="mb-3">
                 <label class="form-label">Card Number</label>
-                <input type="text" class="form-control mb-2" placeholder="1234 5678 9012 3456">
+                <input type="text" class="form-control mb-2" placeholder="1234 5678 9012 3456" required>
                 <div class="d-flex gap-2">
                     <div class="w-50">
                         <label class="form-label">Expiry Date</label>
-                        <input type="text" class="form-control" placeholder="MM/YY">
+                        <input type="text" class="form-control" placeholder="MM/YY" required>
                     </div>
                     <div class="w-50">
                         <label class="form-label">CVV</label>
-                        <input type="text" class="form-control" placeholder="123">
+                        <input type="text" class="form-control" placeholder="123" required>
                     </div>
                 </div>
             </div>
             {% elif payment_method == 'upi' %}
             <div class="mb-3">
                 <label class="form-label">UPI ID</label>
-                <input type="text" class="form-control mb-2" placeholder="yourname@bank">
+                <input type="text" class="form-control mb-2" placeholder="yourname@bank" required>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="verifyUpi">
-                    <label class="form-check-label" for="verifyUpi">
-                        I confirm this is my valid UPI ID.
-                    </label>
+                    <label class="form-check-label" for="verifyUpi">Validate UPI ID.</label>
                 </div>
             </div>
             {% else %}
             <p class="text-muted">No extra details needed for Cash on Delivery.</p>
             {% endif %}
-
+            <!-- Validation Alert -->
+            {% if not can_place_order %}
+            <div class="alert alert-info text-center">
+                <p>⚠️ {{ validation_error_msg }}</p>
+                <br>
+                <a href="{% url 'profile' %}" class="btn btn-outline-dark mt-2">Update Profile</a>
+            </div>
+            {% endif %}
             <div class="text-end mt-4">
-                <button class="btn btn-success px-4" type="submit">Place Order</button>
+                <button class="btn btn-success px-4" type="submit" {% if not can_place_order %}disabled title="{{ validation_error_msg }}" {% endif %}>Place Order</button>
             </div>
         </form>
-
     </div>
 </div>
 {% endblock content %}
