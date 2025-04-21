@@ -3,46 +3,89 @@
 
 {% block content %}
 <div class="container mt-5">
-  <h2 class="mb-4">Profile</h2>
-  <div class="row">
-
+  <div class="row justify-content-center">
     <!-- Left Section: Profile Picture + Username -->
-    <div class="col-md-4 text-center">
-      {% if profile.profile_picture %}
-      <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Picture">
-      {% else %}
-      <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Picture">
-      {% endif %}
-      <h5 class="mt-2">{{ user.username }}</h5>
+    <div class="col-md-3 text-center">
+      <div class="card shadow-sm border-light rounded-3">
+        <div class="card-body">
+          {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Picture">
+          {% else %}
+          <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Picture">
+          {% endif %}
+          <h5 class="mt-2">{{ user.username }}</h5>
+        </div>
+      </div>
     </div>
-
-    <!-- Right Section: Profile Info + Address -->
-    <div class="col-md-8">
-      <p><strong>Email:</strong> {{ profile.email }}</p>
-      <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
-      <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-
-      {% if profile.address %}
-      <hr>
-      <h5>Address</h5>
-      <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
-      <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
-      {% if profile.address.address_line_2 %}
-      <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
-      {% endif %}
-      <p><strong>City:</strong> {{ profile.address.city }}</p>
-      <p><strong>State:</strong> {{ profile.address.state }}</p>
-      <p><strong>Country:</strong> {{ profile.address.country }}</p>
-      <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
-      {% else %}
-      <p>No address linked to profile.</p>
-      {% endif %}
-      <button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#updateModal">Update Profile</button>
+    <!-- Middle Section: Profile Info + Address -->
+    <div class="col-md-5">
+      <div class="card shadow-sm border-light rounded-3 mb-4">
+        <div class="card-body">
+          <h4 class="card-title">Personal Information</h4>
+          <p><strong>Email:</strong> {{ profile.email }}</p>
+          <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+          <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+          {% if profile.address %}
+          <hr>
+          <h5>Address</h5>
+          <div class="row">
+            <div class="col-12">
+              <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
+              {% if profile.address.address_line_2 %}
+              <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
+              {% endif %}
+            </div>
+            <div class="col-md-4">
+              <p><strong>City:</strong> {{ profile.address.city }}</p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>State:</strong> {{ profile.address.state }}</p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Country:</strong> {{ profile.address.country }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
+            </div>
+          </div>
+          {% else %}
+          <p>No address linked to profile.</p>
+          {% endif %}
+          <button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#updateModal">Update Profile</button>
+        </div>
+      </div>
+    </div>
+    <!-- Right Section: Order History -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-light rounded-3">
+        <div class="card-body">
+          <h4 class="card-title">Order History</h4>
+          <div class="list-group">
+            {% for order in history %}
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex justify-content-between">
+                <span>Order #{{ order.id }}</span>
+                <span>{{ order.purchased_at|date:"F d, Y" }}</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>{{ order.product.name }}</span>
+                <span class="badge bg-primary rounded-pill">{{ order.status }}</span>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+          <button type="button" class="btn btn-outline-dark mt-3" data-bs-toggle="modal" data-bs-target="#orderHistoryModal">View All Orders</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-<!-- Modal -->
+<!-- Modal for Updating Profile -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -64,6 +107,33 @@
           <button type="submit" class="btn btn-dark">Save Changes</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+<!-- Modal for Order History -->
+<div class="modal fade" id="orderHistoryModal" tabindex="-1" aria-labelledby="orderHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderHistoryModalLabel">All Orders</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="list-group">
+          {% for order in history %}
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between">
+              <span>Order #{{ order.id }}</span>
+              <span>{{ order.purchased_at|date:"F d, Y" }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>{{ order.product.name }}</span>
+              <span class="badge bg-primary rounded-pill">{{ order.status }}</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -7,7 +7,6 @@ from django.views import View
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Contact, Product, ProductHistory, Comment
-from customer.models import Profile
 
 # Home View
 class HomeView(View):
@@ -23,15 +22,20 @@ class AboutView(View):
 # Contact View
 class ContactView(View):
     def get(self, request):
-        user_email = request.user.profile.email
-        return render(request, 'contact.html', {'title': 'Contact', 'user_name': request.user.username if request.user.is_authenticated else '', 'user_email': user_email if request.user.is_authenticated else '', 'show_login_prompt': not request.user.is_authenticated})
+        if request.user.is_authenticated:
+            user_profile = getattr(request.user, 'profile', None)
+            user_email = user_profile.email if user_profile and user_profile.email else request.user.email
+            return render(request, 'contact.html', {'title': 'Contact', 'user_name': request.user.get_full_name() or request.user.username, 'user_email': user_email, 'show_login_prompt': False})
+        else:
+            return render(request, 'contact.html', {'title': 'Contact', 'show_login_prompt': True})
 
     def post(self, request):
         if not request.user.is_authenticated:
             messages.info(request, "Please sign in to send a message.")
             return redirect('/contact/?next=' + request.path)
-        user_name = request.user.username
-        user_email = request.user.email
+        user_name = request.user.get_full_name() or request.user.username
+        user_profile = getattr(request.user, 'profile', None)
+        user_email = user_profile.email if user_profile and user_profile.email else request.user.email
         user_message = request.POST.get('message')
         attachment = request.FILES.get('file_path')
         if len(user_message.strip()) < 4:
