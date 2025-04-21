@@ -18,17 +18,25 @@
                 <p><strong>Category:</strong> <span class="text-muted">{{ product.category }}</span></p>
                 <p><strong>Price:</strong><span class="text-success fs-4">₹{{ product.price|floatformat:2 }}</span></p>
                 <p><strong>Description:</strong> <span class="text-muted">{{ product.description }}</span></p>
-                <div class="d-flex mt-4">
-                    <form method="post" action="{% url 'add_cart_item' product.id %}?type=regular" class="d-flex flex-grow-1 me-2">
+                <div class="d-flex mt-4 gap-2">
+                    {% if user.is_authenticated %}
+                    {% if product.stock > 0 %}
+                    <form method="post" action="{% url 'add_cart_item' product.id %}?type=regular" class="flex-grow-1">
                         {% csrf_token %}
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="btn btn-outline-dark w-100">Add to Cart</button>
                     </form>
-                    <form method="post" action="{% url 'add_cart_item' product.id %}?type=buy_now" class="d-flex flex-grow-1">
+                    <form method="post" action="{% url 'add_cart_item' product.id %}?type=buy_now" class="flex-grow-1">
                         {% csrf_token %}
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="btn btn-dark w-100">Buy Now</button>
                     </form>
+                    {% else %}
+                    <button class="btn btn-outline-dark w-100" disabled>Out of Stock</button>
+                    {% endif %}
+                    {% else %}
+                    <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#signInModal">Login to Continue</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -45,7 +53,7 @@
                 <button type="submit" class="btn btn-dark">Post Comment</button>
             </form>
         </div>
-        <!-- Comments -->
+        <!-- Comments Display -->
         {% for comment in comments %}
         <div class="d-flex flex-start mb-4">
             <img class="rounded-circle shadow-sm me-3" src="https://cdn-icons-png.flaticon.com/128/3033/3033143.png" width="40" height="40" alt="avatar" />
@@ -68,6 +76,7 @@
                     </div>
                     {% endfor %}
                 </div>
+                <!-- Reply Form -->
                 <div class="collapse mt-2" id="reply-form-{{ comment.id }}">
                     <form method="POST">
                         {% csrf_token %}
