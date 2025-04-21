@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Profile, CustomerAddress, ProfileForm, CustomerAddressForm
-from products .models import ProductHistory
+from .models import Profile, ProfileForm, CustomerAddressForm
+from checkout.models import Order
 
 @login_required
 def profile_view(request):
     user = request.user
-    print(f"DEBUG: Logged in user email = {user.email}")
     profile, created = Profile.objects.get_or_create(user=user, defaults={'email': user.email or ''})
     if user.email and profile.email != user.email:
         profile.email = user.email
@@ -30,5 +28,5 @@ def profile_view(request):
         return redirect('home')
     else:
         form = ProfileForm(instance=profile)
-    history = ProductHistory.objects.filter(user=user).order_by('-purchased_at')
+    history = Order.objects.filter(user=user).prefetch_related('items__product').order_by('-created_at')
     return render(request, 'profile.html', {'form': form, 'profile': profile, 'user': user, 'history': history, 'address_form': address_form})

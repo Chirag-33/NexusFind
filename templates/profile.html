@@ -67,16 +67,24 @@
           <h4 class="card-title">Order History</h4>
           <div class="list-group">
             {% for order in history %}
-            <a href="#" class="list-group-item list-group-item-action">
+            <div class="list-group-item mb-3">
               <div class="d-flex justify-content-between">
-                <span>Order #{{ order.id }}</span>
-                <span>{{ order.purchased_at|date:"F d, Y" }}</span>
+                <strong>Order #{{ order.id }}</strong>
+                <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
               </div>
-              <div class="d-flex justify-content-between">
-                <span>{{ order.product.name }}</span>
-                <span class="badge bg-primary rounded-pill">{{ order.status }}</span>
+              {% for item in order.items.all %}
+              <div class="d-flex align-items-center my-2">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
               </div>
-            </a>
+              {% endfor %}
+              <div class="d-flex justify-content-between mt-2">
+                <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
+                <span><strong>Status:</strong> {{ order.status }}</span>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No orders yet.</p>
             {% endfor %}
           </div>
           <button type="button" class="btn btn-outline-dark mt-3" data-bs-toggle="modal" data-bs-target="#orderHistoryModal">View All Orders</button>
@@ -121,16 +129,24 @@
       <div class="modal-body">
         <div class="list-group">
           {% for order in history %}
-          <a href="#" class="list-group-item list-group-item-action">
+          <div class="list-group-item mb-3">
             <div class="d-flex justify-content-between">
-              <span>Order #{{ order.id }}</span>
-              <span>{{ order.purchased_at|date:"F d, Y" }}</span>
+              <strong>Order #{{ order.id }}</strong>
+              <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
             </div>
-            <div class="d-flex justify-content-between">
-              <span>{{ order.product.name }}</span>
-              <span class="badge bg-primary rounded-pill">{{ order.status }}</span>
+            {% for item in order.items.all %}
+            <div class="d-flex align-items-center my-2">
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
+              <span>{{ item.product.name }} (x{{ item.quantity }})</span>
             </div>
-          </a>
+            {% endfor %}
+            <div class="d-flex justify-content-between mt-2">
+              <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
+              <span><strong>Status:</strong> {{ order.status }}</span>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted">No orders found.</p>
           {% endfor %}
         </div>
       </div>

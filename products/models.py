@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from customer.models import CustomerAddress
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -29,18 +28,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-class ProductHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    purchased_at = models.DateTimeField(auto_now_add=True)  
-
-    class Meta:
-        verbose_name = "Product History"
-        verbose_name_plural = "Product Histories"
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.product.name}"
 
 class Comment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')

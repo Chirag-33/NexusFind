@@ -1,7 +1,6 @@
-from django.contrib import admin
 from django.contrib.admin import register
 from unfold.admin import ModelAdmin
-from .models import Product, ProductCategory, Contact, ProductHistory, Comment
+from .models import Product, ProductCategory, Contact, Comment
 
 @register(Contact)
 class ContactAdmin(ModelAdmin):
@@ -25,9 +24,3 @@ class CommentAdmin(ModelAdmin):
     list_display = ('product', 'user', 'content')
     search_fields = ('product__name', 'user__username', 'content')
     list_filter = ('product', 'created_at')
-
-@register(ProductHistory)
-class ProductHistoryAdmin(ModelAdmin):
-    list_display = ('user', 'product', 'purchased_at')
-    list_filter = ('purchased_at',)
-    search_fields = ('user__username', 'product__name')

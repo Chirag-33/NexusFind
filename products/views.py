@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Contact, Product, ProductHistory, Comment
+from .models import Contact, Product, Comment
 
 # Home View
 class HomeView(View):
@@ -135,8 +135,7 @@ class ProductDetailView(View):
     def post(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
-            return redirect('home')
+        except Product.DoesNotExist: return redirect('home')
         content = request.POST.get('content')
         parent_id = request.POST.get('parent_id')
         if content:
