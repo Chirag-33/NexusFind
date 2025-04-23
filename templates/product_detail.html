@@ -43,15 +43,18 @@
     </div>
 
     <!-- Comments Section -->
+     
     <div class="card shadow-sm mt-5 p-4">
         <h4 class="text-dark mb-4">💬 Comments <span class="text-muted">({{ product.comments.count }})</span></h4>
         <div class="mb-4">
+            {% if user.is_authenticated %}
             <h6><strong>Add a comment</strong></h6>
             <form method="POST">
                 {% csrf_token %}
                 <textarea class="form-control mb-3" name="content" rows="4" placeholder="What is your view?" required></textarea>
                 <button type="submit" class="btn btn-dark">Post Comment</button>
             </form>
+            {% endif %}
         </div>
         <!-- Comments Display -->
         {% for comment in comments %}
@@ -63,7 +66,9 @@
                     <span class="badge bg-secondary small ms-2">{{ comment.created_at | naturaltime }}</span>
                 </p>
                 <p class="text-muted mb-2">{{ comment.content }}</p>
+                {% if user.is_authenticated %}
                 <button class="btn btn-sm btn-outline-dark mb-2" data-bs-toggle="collapse" href="#reply-form-{{ comment.id }}">Reply</button>
+                {% endif %}
                 <!-- Replies -->
                 <div class="ms-4">
                     {% for reply in comment.replies.all %}
@@ -91,6 +96,7 @@
         <p class="text-muted">No comments yet. Be the first to comment!</p>
         {% endfor %}
     </div>
+    
     <!-- Similar Products Slider -->
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-2">

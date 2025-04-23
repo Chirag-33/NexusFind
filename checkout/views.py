@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404, render,HttpResponse
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
@@ -17,6 +17,7 @@ from .utils import (
 )
 import stripe
 from django.conf import settings
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class CartDetailView(LoginRequiredMixin, View):
