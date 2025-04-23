@@ -16,6 +16,7 @@ djangorestframework-simplejwt = "*"
 PyJWT = "*" 
 cryptography = '*'
 psycopg = {extras = ["binary"], version = "*"}
+stripe = "*"
 
 [dev-packages]
 

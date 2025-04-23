@@ -12,8 +12,8 @@ def generate_tracking_id(length=10):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
 def get_cart_and_type(request):
-    cart_type = request.GET.get('type', 'regular')
-    cart = Cart.get_cart(request.user, cart_type)
+    cart_type = request.GET.get('type', 'regular')  
+    cart = Cart.get_cart(request.user, cart_type)  
     return cart, cart_type
 
 def apply_coupon_to_cart(cart, coupon_code, user):

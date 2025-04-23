@@ -21,12 +21,19 @@ MEDIA_ROOT = BASE_DIR / "media"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
+#Stripe key
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = []
 
 
 # Application definition
+
+# settings.py
 
 INSTALLED_APPS = [
     'allauth',
@@ -43,8 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'checkout',
     'products',
-    'customer',
+    'customer'
 ]
+
 
 MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
