@@ -109,9 +109,17 @@
                 <a href="{% url 'profile' %}" class="btn btn-outline-dark mt-2">Update Profile</a>
             </div>
             {% endif %}
-            <div class="text-end mt-4">
-                <button class="btn btn-success px-4" type="submit" {% if not can_place_order %}disabled title="{{ validation_error_msg }}" {% endif %}>Place Order</button>
-            </div>
+            <form method="post" action="{% url 'process_payment' %}">
+                {% csrf_token %}
+                <input type="hidden" name="cart_type" value="{{ cart_type }}">
+                <input type="hidden" name="payment_method" value="{{ payment_method }}">
+                <div class="text-end mt-4">
+                    <button class="btn btn-success px-4" type="submit" {% if not can_place_order %}disabled title="{{ validation_error_msg }}" {% endif %}>
+                        Place Order
+                    </button>
+                </div>
+            </form>
+            
         </form>
     </div>
 </div>
