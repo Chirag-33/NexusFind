@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField("product_category_image", blank=True, null=True)
+    image = models.ImageField(upload_to='prod_category', blank=True, null=True)
     product_type = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
@@ -16,7 +16,7 @@ class ProductCategory(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    image = models.ImageField('product_image')
+    image = models.ImageField(upload_to='prod_img')
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name="products")
     created_at = models.DateTimeField(auto_now_add=True)

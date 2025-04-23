@@ -8,12 +8,42 @@
     <div class="col-md-3 text-center">
       <div class="card shadow-sm border-light rounded-3">
         <div class="card-body">
+          {% if editing %}
           {% if profile.profile_picture %}
-            <img src="{{ profile.profile_picture.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Picture">
-          {% else %}
-            <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Picture">
+          <form method="POST" action="{% url 'profile' %}?remove_picture=1" class="text-start mb-2">
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{ user.username }}">
+            <input type="hidden" name="email" value="{{ form.email.value|default:profile.email }}">
+            <input type="hidden" name="phone_number" value="{{ form.phone_number.value|default:profile.phone_number }}">
+            <input type="hidden" name="address_line_1" value="{{ address_form.address_line_1.value|default:profile.address.address_line_1 }}">
+            <input type="hidden" name="address_line_2" value="{{ address_form.address_line_2.value|default:profile.address.address_line_2 }}">
+            <input type="hidden" name="address_type" value="{{ address_form.address_type.value|default:profile.address.address_type }}">
+            <input type="hidden" name="city" value="{{ address_form.city.value|default:profile.address.city }}">
+            <input type="hidden" name="state" value="{{ address_form.state.value|default:profile.address.state }}">
+            <input type="hidden" name="country" value="{{ address_form.country.value|default:profile.address.country }}">
+            <input type="hidden" name="pincode" value="{{ address_form.pincode.value|default:profile.address.pincode }}">
+            <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none" title="Remove Profile Picture" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove</button>
+          </form>
           {% endif %}
-          <h5 class="mt-2">{{ user.username }}</h5>
+          <form method="POST" enctype="multipart/form-data" id="profileForm">
+            {% csrf_token %}
+            <div>
+              <label for="id_profile_picture" class="d-block">
+                <img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}https://img.icons8.com/?size=150&id=15263&format=png&color=000000{% endif %}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" alt="Profile Picture">
+                <input type="file" name="profile_picture" id="id_profile_picture" class="d-none" accept="image/*">
+              </label>
+            </div>
+            <div class="mb-3">
+              <input type="text" name="username" id="id_username" class="form-control text-center" value="{{ user.username }}" required>
+            </div>
+            {% else %}
+            {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Picture">
+            {% else %}
+            <img src="https://img.icons8.com/?size=150&id=15263&format=png&color=000000" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Picture">
+            {% endif %}
+            <h5 class="mt-2">{{ user.username }}</h5>
+            {% endif %}
         </div>
       </div>
     </div>
@@ -22,64 +52,84 @@
     <div class="col-md-5">
       <div class="card shadow-sm border-light rounded-3 mb-4">
         <div class="card-body">
-          <h4 class="card-title d-flex justify-content-between align-items-center">
-            Profile Information
+          <h4 class="card-title d-flex justify-content-between align-items-center">Profile Information
             {% if not editing %}
-              <a href="?edit=1" class="btn btn-sm btn-outline-dark">Edit Profile</a>
+            <a href="?edit=1" class="btn btn-sm btn-outline-dark">Edit Profile</a>
             {% endif %}
           </h4>
-
           {% if editing %}
-            <form method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-              <h6 class="mb-2">Profile Info</h6>
-              {{ form.as_p }}
-
-              <hr>
-              <h6 class="mb-2">Address Info</h6>
-              {{ address_form.as_p }}
-
-              <div class="d-flex justify-content-end mt-3">
-                <a href="{% url 'profile' %}" class="btn btn-outline-danger me-2">Cancel</a>
-                <button type="submit" class="btn btn-dark">Save Changes</button>
-              </div>
-            </form>
+          <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+            <input type="email" name="email" id="{{ form.email.id_for_label }}" class="form-control" value="{{ form.email.value|default:profile.email }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number:</label>
+            <input type="text" name="phone_number" id="{{ form.phone_number.id_for_label }}" class="form-control" value="{{ form.phone_number.value|default:profile.phone_number }}">
+          </div>
+          <hr>
+          <h6 class="mb-2">Address Info</h6>
+          <div class="mb-3">
+            <label for="{{ address_form.address_line_1.id_for_label }}" class="form-label">Address Line 1:</label>
+            <input type="text" name="address_line_1" id="{{ address_form.address_line_1.id_for_label }}" class="form-control" value="{{ address_form.address_line_1.value|default:profile.address.address_line_1 }}">
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.address_line_2.id_for_label }}" class="form-label">Address Line 2:</label>
+            <input type="text" name="address_line_2" id="{{ address_form.address_line_2.id_for_label }}" class="form-control" value="{{ address_form.address_line_2.value|default:profile.address.address_line_2 }}">
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.address_type.id_for_label }}" class="form-label">Address Type:</label>
+            <select name="address_type" id="{{ address_form.address_type.id_for_label }}" class="form-control">
+              <option value="H"{% if address_form.address_type.value|default:profile.address.address_type == 'H' %}selected{% endif %}>Home</option>
+              <option value="B"{% if address_form.address_type.value|default:profile.address.address_type == 'B' %}selected{% endif %}>Work</option>
+              <option value="O"{% if address_form.address_type.value|default:profile.address.address_type == 'O' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.city.id_for_label }}" class="form-label">City:</label>
+            <input type="text" name="city" id="{{ address_form.city.id_for_label }}" class="form-control" value="{{ address_form.city.value|default:profile.address.city }}">
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.state.id_for_label }}" class="form-label">State:</label>
+            <input type="text" name="state" id="{{ address_form.state.id_for_label }}" class="form-control" value="{{ address_form.state.value|default:profile.address.state }}">
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.country.id_for_label }}" class="form-label">Country:</label>
+            <input type="text" name="country" id="{{ address_form.country.id_for_label }}" class="form-control" value="{{ address_form.country.value|default:profile.address.country }}">
+          </div>
+          <div class="mb-3">
+            <label for="{{ address_form.pincode.id_for_label }}" class="form-label">Pincode:</label>
+            <input type="text" name="pincode" id="{{ address_form.pincode.id_for_label }}" class="form-control" value="{{ address_form.pincode.value|default:profile.address.pincode }}">
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <a href="{% url 'profile' %}" class="btn btn-outline-danger me-2">Cancel</a>
+            <button type="submit" class="btn btn-dark">Save Changes</button>
+          </div>
+          </form>
           {% else %}
-            <p><strong>Email:</strong> {{ profile.email }}</p>
-            <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
-            <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-
-            {% if profile.address %}
-              <hr>
-              <h5>Address</h5>
-              <div class="row">
-                <div class="col-12">
-                  <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
-                  {% if profile.address.address_line_2 %}
-                    <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
-                  {% endif %}
-                </div>
-                <div class="col-md-4">
-                  <p><strong>City:</strong> {{ profile.address.city }}</p>
-                </div>
-                <div class="col-md-4">
-                  <p><strong>State:</strong> {{ profile.address.state }}</p>
-                </div>
-                <div class="col-md-4">
-                  <p><strong>Country:</strong> {{ profile.address.country }}</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <p><strong>Pincode:</strong> {{ profile.address.pincode }}</p>
-                </div>
-                <div class="col-md-6">
-                  <p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p>
-                </div>
-              </div>
-            {% else %}
-              <p class="text-muted">No address linked to profile.</p>
-            {% endif %}
+          <p><strong>Email:</strong> {{ profile.email }}</p>
+          <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+          <p><strong>Joined On:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+          {% if profile.address %}
+          <hr>
+          <h5>Address</h5>
+          <div class="row">
+            <div class="col-12">
+              <p><strong>Address Line 1:</strong> {{ profile.address.address_line_1 }}</p>
+              {% if profile.address.address_line_2 %}
+              <p><strong>Address Line 2:</strong> {{ profile.address.address_line_2 }}</p>
+              {% endif %}
+            </div>
+            <div class="col-md-4"><p><strong>City:</strong> {{ profile.address.city }}</p></div>
+            <div class="col-md-4"><p><strong>State:</strong> {{ profile.address.state }}</p></div>
+            <div class="col-md-4"><p><strong>Country:</strong> {{ profile.address.country }}</p></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><p><strong>Pincode:</strong> {{ profile.address.pincode }}</p></div>
+            <div class="col-md-6"><p><strong>Type:</strong> {{ profile.address.get_address_type_display }}</p></div>
+          </div>
+          {% else %}
+          <p class="text-muted">No address linked to profile.</p>
+          {% endif %}
           {% endif %}
         </div>
       </div>
@@ -92,24 +142,24 @@
           <h4 class="card-title">Order History</h4>
           <div class="list-group">
             {% for order in history %}
-              <div class="list-group-item mb-3">
-                <div class="d-flex justify-content-between">
-                  <strong>Order #{{ order.id }}</strong>
-                  <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
-                </div>
-                {% for item in order.items.all %}
-                  <div class="d-flex align-items-center my-2">
-                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
-                    <span>{{ item.product.name }} (x{{ item.quantity }})</span>
-                  </div>
-                {% endfor %}
-                <div class="d-flex justify-content-between mt-2">
-                  <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
-                  <span><strong>Status:</strong> {{ order.status }}</span>
-                </div>
+            <div class="list-group-item mb-3">
+              <div class="d-flex justify-content-between">
+                <strong>Order #{{ order.id }}</strong>
+                <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
               </div>
+              {% for item in order.items.all %}
+              <div class="d-flex align-items-center my-2">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+              </div>
+              {% endfor %}
+              <div class="d-flex justify-content-between mt-2">
+                <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
+                <span><strong>Status:</strong> {{ order.status }}</span>
+              </div>
+            </div>
             {% empty %}
-              <p class="text-muted">No orders yet.</p>
+            <p class="text-muted">No orders yet.</p>
             {% endfor %}
           </div>
           <button type="button" class="btn btn-outline-dark mt-3" data-bs-toggle="modal" data-bs-target="#orderHistoryModal">View All Orders</button>
@@ -130,24 +180,24 @@
       <div class="modal-body">
         <div class="list-group">
           {% for order in history %}
-            <div class="list-group-item mb-3">
-              <div class="d-flex justify-content-between">
-                <strong>Order #{{ order.id }}</strong>
-                <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
-              </div>
-              {% for item in order.items.all %}
-                <div class="d-flex align-items-center my-2">
-                  <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
-                  <span>{{ item.product.name }} (x{{ item.quantity }})</span>
-                </div>
-              {% endfor %}
-              <div class="d-flex justify-content-between mt-2">
-                <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
-                <span><strong>Status:</strong> {{ order.status }}</span>
-              </div>
+          <div class="list-group-item mb-3">
+            <div class="d-flex justify-content-between">
+              <strong>Order #{{ order.id }}</strong>
+              <small class="text-muted">{{ order.created_at|date:"F d, Y" }}</small>
             </div>
+            {% for item in order.items.all %}
+            <div class="d-flex align-items-center my-2">
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-circle me-2" style="width: 45px; height: 45px; object-fit: cover;">
+              <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+            </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between mt-2">
+              <span><strong>Total:</strong> ₹{{ order.final_price }}</span>
+              <span><strong>Status:</strong> {{ order.status }}</span>
+            </div>
+          </div>
           {% empty %}
-            <p class="text-muted">No orders found.</p>
+          <p class="text-muted">No orders found.</p>
           {% endfor %}
         </div>
       </div>

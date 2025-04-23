@@ -26,9 +26,6 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=10, blank=True)
     address = models.ForeignKey(CustomerAddress, on_delete=models.CASCADE, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
-
     def update_email(self, new_email):
         if self.email != new_email:
             self.email = new_email
@@ -36,6 +33,9 @@ class Profile(models.Model):
     
     def get_full_address(self):
         return f"{self.address.address_line_1}, {self.address.city}, {self.address.state}, {self.address.country} - {self.address.pincode}" if self.address else "No Address"
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
 
 class ProfileForm(forms.ModelForm):
     class Meta:
